@@ -7,7 +7,6 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
@@ -94,7 +93,7 @@ public class Database extends SQLiteOpenHelper {
                     null,
                     values);
         }
-        db.close();
+
         return newRowId;
     }
 
@@ -109,7 +108,9 @@ public class Database extends SQLiteOpenHelper {
         return exists;
     }
 
-    // Updating single contact
+    /**
+     * Updating single contact
+     */
     public int updateAppointment(Appointment appointment) {
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -120,7 +121,7 @@ public class Database extends SQLiteOpenHelper {
         values.put(COLUMN_NAME_LONGITUDE, appointment.longitude);
         values.put(COLUMN_NAME_PIC, appointment.pic);
 
-        // updating row
+        //Updating row
         return db.update(TABLE_NAME, values, COLUMN_NAME_TITLE + " = ?",
                 new String[] { appointment.title });
     }
@@ -139,6 +140,8 @@ public class Database extends SQLiteOpenHelper {
                 appointment.title = cursor.getString(0);
                 appointment.detail = cursor.getString(1);
                 appointment.pic = cursor.getBlob(2);
+
+                cursor.close();
                 return appointment;
             }
         }
@@ -171,6 +174,7 @@ public class Database extends SQLiteOpenHelper {
             } while (cursor.moveToNext());
         }
 
+        cursor.close();
         return appointments;
     }
 
@@ -180,6 +184,5 @@ public class Database extends SQLiteOpenHelper {
         db.delete(TABLE_NAME, //table name
                 COLUMN_NAME_TITLE + " = ?",  // selections
                 new String[] { appointment.title }); //selections args
-        db.close();
     }
 }

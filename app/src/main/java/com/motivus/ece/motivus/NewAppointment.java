@@ -49,12 +49,17 @@ public class NewAppointment extends ActionBarActivity {
                         appointment.longitude = longitude;
                         Database.getInstance(getApplicationContext()).addAppointment(appointment);
 
+                        Intent data = new Intent();
+                        if (getParent() == null) {
+                            setResult(Activity.RESULT_OK, data);
+                        } else {
+                            getParent().setResult(Activity.RESULT_OK, data);
+                        }
                         finish();
                     }
                 }
         );
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

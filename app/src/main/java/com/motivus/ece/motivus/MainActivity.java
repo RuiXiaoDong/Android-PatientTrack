@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
@@ -23,15 +24,28 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 
 public class MainActivity extends ActionBarActivity implements ActionBar.TabListener {
+    /**
+     * The refresh time
+     */
     private final long LOCATION_REFRESH_TIME = 10000;
+    /**
+     * The refresh distance is set to 0 meter, which means the update does not depend on distance
+     */
     private final float LOCATION_REFRESH_DISTANCE = 0;
+    /**
+     * The distance threshold in meter.
+     * For example, A is current location, and B is the target location
+     *              If A and B are as close as 100 meters, then we consider them as one location
+     */
     private final float LOCATION_THRESHOLD_DISTANCE = 100;
+
     private LocationManager mLocationManager;
     private Database db;
     private SectionsPagerAdapter mSectionsPagerAdapter;
@@ -219,6 +233,8 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         public Database db;
         public List<Appointment> appointmentList = new ArrayList<Appointment>();
         public AppointmentAdapter mAdapter;
+        private final int NewAppointmentIndex = 0;
+
         /**
          * Returns a new instance of this fragment for the given section
          * number.
@@ -251,6 +267,17 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             mAdapter = new AppointmentAdapter(getActivity(), appointmentList);
             setListAdapter(mAdapter);
 
+            FragmentManager fm = getFragmentManager();
+            fm.addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
+                @Override
+                public void onBackStackChanged() {
+                    //Update after delete or modify any appointment; even just return by back button
+                    if(getFragmentManager().getBackStackEntryCount() == 0) {
+                        update();
+                    }
+                }
+            });
+
             //Add new appointment button
             Button newAppointment = (Button) rootView.findViewById(R.id.button_newappointment);
             newAppointment.setOnClickListener(
@@ -258,12 +285,25 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                         @Override
                         public void onClick(View v) {
                             Intent newActivity = new Intent(v.getContext(), NewAppointment.class);
-                            startActivity(newActivity);
+                            startActivityForResult(newActivity, NewAppointmentIndex);
                         }
                     }
             );
 
             return rootView;
+        }
+
+        @Override
+        public void onActivityResult(int requestCode, int resultCode, Intent data) {
+            super.onActivityResult(requestCode, resultCode, data);
+            switch(requestCode) {
+                case (NewAppointmentIndex) : {
+                    if (resultCode == Activity.RESULT_OK) {
+                        update();
+                    }
+                    break;
+                }
+            }
         }
 
         @Override
@@ -273,8 +313,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             Bundle bundle = new Bundle();
             bundle.putParcelable("appointment", appointment);
             detailFragment.setArguments(bundle);
-            FragmentTransaction fragmentTransaction =
-                    getActivity().getSupportFragmentManager().beginTransaction();
+            FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
             fragmentTransaction.replace(R.id.container, detailFragment);
             fragmentTransaction.addToBackStack(null);
             fragmentTransaction.commit();
@@ -342,6 +381,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
     }
 
     public static class DetailFragment extends Fragment {
+        public Appointment appointment;
         public DetailFragment() {
         }
 
@@ -350,7 +390,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
             Bundle args = getArguments();
-            Appointment appointment  = args.getParcelable("appointment");
+            appointment  = args.getParcelable("appointment");
 
             TextView editText_name = (TextView)(rootView.findViewById(R.id.textView_title));
             editText_name.setText(appointment.title, TextView.BufferType.EDITABLE);
@@ -379,6 +419,17 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                 }
             });
             */
+            //Add new appointment button
+            Button deleteAppointment = (Button) rootView.findViewById(R.id.button_delete);
+            deleteAppointment.setOnClickListener(
+                    new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            getActivity().getSupportFragmentManager().popBackStack();
+                            Database.getInstance(getActivity()).deleteAppointment(appointment);
+                        }
+                    }
+            );
 
             return rootView;
         }
