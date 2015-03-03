@@ -11,7 +11,9 @@ public final class Appointment implements Parcelable {
     public String detail;
     public double latitude;
     public double longitude;
+    public boolean check = false;
     public byte[] pic;
+
     public Appointment() {
 
     }
