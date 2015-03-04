@@ -1,11 +1,18 @@
 package com.motivus.ece.motivus;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -29,12 +36,11 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
 public class MainActivity extends ActionBarActivity implements ActionBar.TabListener {
     /**
      * The refresh time
      */
-    private final long LOCATION_REFRESH_TIME = 10000;
+    private final long LOCATION_REFRESH_TIME = 1000;
     /**
      * The refresh distance is set to 0 meter, which means the update does not depend on distance
      */
@@ -44,12 +50,65 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
      * For example, A is current location, and B is the target location
      *              If A and B are as close as 100 meters, then we consider them as one location
      */
-    private final float LOCATION_THRESHOLD_DISTANCE = 100;
+    private final float LOCATION_THRESHOLD_DISTANCE = 200;
+    private final float LOCATION_LOG_THRESHOLD_DISTANCE = 50;
+    /**
+     *
+     */
+    double mLastLatitude = 0;
+    double mLastLongitude = 0;
 
     private LocationManager mLocationManager;
-    private Database db;
+
+    private Database db_appointment;
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private ViewPager mViewPager;
+    private LocationListener mLocationListener = new LocationListener() {
+        @Override
+        public void onLocationChanged(final Location location) {
+            double latitude = location.getLatitude();
+            double longitude = location.getLongitude();
+
+            DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd-HH:mm:ss");
+            Date date = new Date();
+            GPSlocation gpsLocation = new GPSlocation();
+            gpsLocation.time = dateFormat.format(date);
+            gpsLocation.latitude = latitude;
+            gpsLocation.longitude = longitude;
+            double logDiffDistance = GoogleMaps.checkDistance(latitude, longitude, mLastLatitude, mLastLongitude);
+            if (logDiffDistance >= LOCATION_LOG_THRESHOLD_DISTANCE) {
+                Database.getInstance(getApplicationContext()).addGPS(gpsLocation);
+                mLastLatitude = latitude;
+                mLastLongitude = longitude;
+            }
+
+            //Compare appointment location
+            ArrayList<Appointment> appointments = Database.getInstance(getApplicationContext()).getAllAppointments();
+            for(int i = 0; i <  appointments.size(); i++) {
+                double diffDistance = GoogleMaps.checkDistance(latitude, longitude, appointments.get(i).latitude, appointments.get(i).longitude);
+                if (diffDistance <= LOCATION_THRESHOLD_DISTANCE) {
+                    appointments.get(i).check = true;
+                    Toast.makeText(getApplicationContext(),
+                            "\"" + appointments.get(i).title + "\" appointment DONE!" , Toast.LENGTH_SHORT)
+                            .show();
+                }
+            }
+        }
+
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+
+        }
+
+        @Override
+        public void onProviderEnabled(String provider) {
+        }
+
+        @Override
+        public void onProviderDisabled(String provider) {
+
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,16 +116,14 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         setContentView(R.layout.activity_main);
 
         //Set up the database
-        db = Database.getInstance(this);
+        db_appointment = Database.getInstance(this);
 
         //Set up the action bar.
         final ActionBar actionBar = getSupportActionBar();
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
-        //Constantly monitoring the GPS location
-        mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, LOCATION_REFRESH_TIME,
-                LOCATION_REFRESH_DISTANCE, mLocationListener);
+        //get the location manager
+        mLocationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
 
         //Set up the ViewPager with the sections adapter.
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
@@ -76,7 +133,8 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             @Override
             public void onPageSelected(int position) {
                 actionBar.setSelectedNavigationItem(position);
-                mSectionsPagerAdapter.notifyDataSetChanged();
+               //
+               // mSectionsPagerAdapter.notifyDataSetChanged();
             }
             public void onPageScrollStateChanged(int state) {
             }
@@ -97,6 +155,18 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //Constantly monitoring the GPS location
+        this.mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, LOCATION_REFRESH_TIME, LOCATION_REFRESH_DISTANCE,mLocationListener);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        this.mLocationManager.removeUpdates(mLocationListener);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -124,7 +194,8 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
     public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
         // When the given tab is selected, switch to the corresponding page in
         // the ViewPager.
-        mViewPager.setCurrentItem(tab.getPosition());
+        int tabPosition = tab.getPosition();
+        mViewPager.setCurrentItem(tabPosition);
     }
 
     @Override
@@ -135,38 +206,6 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
     public void onTabReselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
     }
 
-    private final LocationListener mLocationListener = new LocationListener() {
-        @Override
-        public void onLocationChanged(final Location location) {
-            double latitude = location.getLatitude();
-            double longitude = location.getLongitude();
-            ArrayList<Appointment> appointments = Database.getInstance(getApplicationContext()).getAllAppointments();
-            for(int i = 0; i <  appointments.size(); i++) {
-                double diffDistance = GoogleMaps.checkDistance(latitude, longitude, appointments.get(i).latitude, appointments.get(i).longitude);
-                if (diffDistance <= LOCATION_THRESHOLD_DISTANCE) {
-                    appointments.get(i).check = true;
-                    Toast.makeText(getApplicationContext(),
-                            "\"" + appointments.get(i).title + "\" appointment DONE!" , Toast.LENGTH_SHORT)
-                            .show();
-                }
-            }
-        }
-
-        @Override
-        public void onStatusChanged(String provider, int status, Bundle extras) {
-
-        }
-
-        @Override
-        public void onProviderEnabled(String provider) {
-
-        }
-
-        @Override
-        public void onProviderDisabled(String provider) {
-
-        }
-    };
     /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
      * one of the sections/tabs/pages.
@@ -181,13 +220,13 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         public Fragment getItem(int position) {
             switch(position) {
                 case 0:
-                    return AppointmentFragment.newInstance(position + 1, db);
+                    return AppointmentFragment.newInstance(position + 1);
                 case 1:
                     return CalendarFragment.newInstance(position + 1);
                 case 2:
                     return ReportFragment.newInstance(position + 1);
                 default:
-                    return AppointmentFragment.newInstance(position + 1, db);
+                    return AppointmentFragment.newInstance(position + 1);
             }
         }
 
@@ -223,6 +262,28 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         }
     }
 
+    private void alertTurnOnGPS() {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Do you want to enable GPS?")
+                .setCancelable(false)
+                .setPositiveButton("Yes",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(final DialogInterface dialog,
+                                                final int id) {
+                                startActivity(new Intent(
+                                        android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                            }
+                        })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(final DialogInterface dialog,
+                                        final int id) {
+                        dialog.cancel();
+                    }
+                });
+        final AlertDialog alert = builder.create();
+        alert.show();
+    }
+
     public static class AppointmentFragment extends ListFragment {
         /**
          * The fragment argument representing the section number for this
@@ -230,7 +291,6 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
          */
         private static final String ARG_SECTION_NUMBER = "section_number";
 
-        public Database db;
         public List<Appointment> appointmentList = new ArrayList<Appointment>();
         public AppointmentAdapter mAdapter;
         private final int NewAppointmentIndex = 0;
@@ -239,9 +299,8 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
          * Returns a new instance of this fragment for the given section
          * number.
          */
-        public static AppointmentFragment newInstance(int sectionNumber, Database database) {
+        public static AppointmentFragment newInstance(int sectionNumber) {
             AppointmentFragment fragment = new AppointmentFragment();
-            fragment.db = database;
             Bundle args = new Bundle();
             args.putInt(ARG_SECTION_NUMBER, sectionNumber);
             fragment.setArguments(args);
@@ -252,7 +311,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         }
 
         public void update() {
-            appointmentList = db.getAllAppointments();
+            appointmentList = Database.getInstance(getActivity()).getAllAppointments();
             mAdapter = new AppointmentAdapter(getActivity(), appointmentList);
             setListAdapter(mAdapter);
         }
@@ -263,7 +322,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             View rootView = inflater.inflate(R.layout.fragment_appointment, container, false);
 
             //Get all the appointment and put them into
-            appointmentList = db.getAllAppointments();
+            appointmentList = Database.getInstance(getActivity()).getAllAppointments();
             mAdapter = new AppointmentAdapter(getActivity(), appointmentList);
             setListAdapter(mAdapter);
 
@@ -376,6 +435,17 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_report, container, false);
+            Button trackButton = (Button) rootView.findViewById(R.id.button_tracking);
+            trackButton.setOnClickListener(
+                    new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent map = new Intent(v.getContext(), TrackingMap.class);
+                            startActivity(map);
+                        }
+                    }
+            );
+
             return rootView;
         }
     }
@@ -438,6 +508,6 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
     @Override
     public void onDestroy() {
         super.onDestroy();
-        db.close();
+        db_appointment.close();
     }
 }
