@@ -56,7 +56,7 @@ public class TrackingMap extends FragmentActivity implements LocationListener {
         //Loading map
         try {
             initializeMap();
-            ArrayList<GPSlocation> gpsLocations = Database.getInstance(getApplicationContext()).getAllGPSs();
+            ArrayList<GPSlocation> gpsLocations = Database.getInstance(getApplication()).getAllGPSs();
             putMarkers(gpsLocations);
         } catch (Exception e) {
             e.printStackTrace();
@@ -82,7 +82,7 @@ public class TrackingMap extends FragmentActivity implements LocationListener {
                     MIN_DISTANCE, this);
 
             if (googleMap == null) {
-                Toast.makeText(getApplicationContext(),
+                Toast.makeText(getApplication(),
                         "Unable to create the map", Toast.LENGTH_SHORT)
                         .show();
             }

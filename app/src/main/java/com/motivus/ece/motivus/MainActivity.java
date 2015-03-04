@@ -63,7 +63,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
     private Database db_appointment;
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private ViewPager mViewPager;
-    private LocationListener mLocationListener = new LocationListener() {
+    private final LocationListener mLocationListener = new LocationListener() {
         @Override
         public void onLocationChanged(final Location location) {
             double latitude = location.getLatitude();
@@ -77,18 +77,18 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             gpsLocation.longitude = longitude;
             double logDiffDistance = GoogleMaps.checkDistance(latitude, longitude, mLastLatitude, mLastLongitude);
             if (logDiffDistance >= LOCATION_LOG_THRESHOLD_DISTANCE) {
-                Database.getInstance(getApplicationContext()).addGPS(gpsLocation);
+                Database.getInstance(getApplication()).addGPS(gpsLocation);
                 mLastLatitude = latitude;
                 mLastLongitude = longitude;
             }
 
             //Compare appointment location
-            ArrayList<Appointment> appointments = Database.getInstance(getApplicationContext()).getAllAppointments();
+            ArrayList<Appointment> appointments = Database.getInstance(getApplication()).getAllAppointments();
             for(int i = 0; i <  appointments.size(); i++) {
                 double diffDistance = GoogleMaps.checkDistance(latitude, longitude, appointments.get(i).latitude, appointments.get(i).longitude);
                 if (diffDistance <= LOCATION_THRESHOLD_DISTANCE) {
                     appointments.get(i).check = true;
-                    Toast.makeText(getApplicationContext(),
+                    Toast.makeText(getApplication(),
                             "\"" + appointments.get(i).title + "\" appointment DONE!" , Toast.LENGTH_SHORT)
                             .show();
                 }

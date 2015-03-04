@@ -9,6 +9,8 @@ import android.os.Parcelable;
 public final class Appointment implements Parcelable {
     public String title;
     public String detail;
+    public String date;
+    public String time;
     public double latitude;
     public double longitude;
     public boolean check = false;
@@ -23,10 +25,12 @@ public final class Appointment implements Parcelable {
         readFromParcel(in);
     }
 
-    public Appointment(String title, String detail, Double latitude, Double longitude, byte[] pic) {
+    public Appointment(String title, String detail, String date, String time, Double latitude, Double longitude, byte[] pic) {
         super();
         this.title = title;
         this.detail = detail;
+        this.date = date;
+        this.time = time;
         this.latitude = latitude;
         this.longitude = longitude;
         this.pic = pic;

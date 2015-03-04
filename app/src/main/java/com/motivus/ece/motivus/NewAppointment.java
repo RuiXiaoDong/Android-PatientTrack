@@ -1,6 +1,8 @@
 package com.motivus.ece.motivus;
 
 import android.app.Activity;
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -8,7 +10,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.TimePicker;
+
+import java.util.Calendar;
 
 
 public class NewAppointment extends ActionBarActivity {
@@ -36,6 +42,48 @@ public class NewAppointment extends ActionBarActivity {
                     }
                 }
         );
+
+        //Add time button
+        final EditText dateAppointment = (EditText) findViewById(R.id.editText_date);
+        final EditText timeAppointment = (EditText) findViewById(R.id.editText_time);
+        //Add map button
+        Button timePicker = (Button) findViewById(R.id.button_timePicker);
+        timePicker.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Calendar mcurrentTime = Calendar.getInstance();
+                int year = mcurrentTime.get(Calendar.YEAR);
+                int month = mcurrentTime.get(Calendar.MONTH);
+                int day = mcurrentTime.get(Calendar.DAY_OF_MONTH);
+                int hour = mcurrentTime.get(Calendar.HOUR_OF_DAY);
+                int minute = mcurrentTime.get(Calendar.MINUTE);
+
+                //Pick time within the day
+                TimePickerDialog mTimePicker;
+                mTimePicker = new TimePickerDialog(NewAppointment.this, new TimePickerDialog.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
+                        String hours = (selectedHour < 10 ) ? "0" + selectedHour : "" + selectedHour;
+                        String mins = (selectedMinute < 10) ? "0" + selectedMinute : "" + selectedMinute;
+                        timeAppointment.setText(hours + ":" + mins);
+                    }
+                }, hour, minute, true);//Yes 24 hour time
+                mTimePicker.show();
+
+                //Pick the date, month, year
+                DatePickerDialog mDatePicker;
+                mDatePicker = new DatePickerDialog(NewAppointment.this, new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker timePicker, int year, int monthOfYear, int dayOfMonth) {
+                        String months = (monthOfYear < 10 ) ? "0" + monthOfYear : "" + monthOfYear;
+                        String days = (dayOfMonth < 10) ? "0" + dayOfMonth : "" + dayOfMonth;
+                        dateAppointment.setText(year + "-" + months + "-" + days);
+                    }
+                }, year, month, day);//Yes 24 hour time
+                mDatePicker.show();
+            }
+        });
+
         //Add new appointment button
         Button submitAppointment = (Button) findViewById(R.id.button_submit);
         submitAppointment.setOnClickListener(
@@ -45,9 +93,11 @@ public class NewAppointment extends ActionBarActivity {
                         Appointment appointment = new Appointment();
                         appointment.title = titleAppointment.getText().toString();
                         appointment.detail = detailAppointment.getText().toString();
+                        appointment.date = dateAppointment.getText().toString();
+                        appointment.time = timeAppointment.getText().toString();
                         appointment.latitude = latitude;
                         appointment.longitude = longitude;
-                        Database.getInstance(getApplicationContext()).addAppointment(appointment);
+                        Database.getInstance(getApplication()).addAppointment(appointment);
 
                         Intent data = new Intent();
                         if (getParent() == null) {

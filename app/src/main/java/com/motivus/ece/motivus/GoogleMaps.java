@@ -116,7 +116,7 @@ public class GoogleMaps extends FragmentActivity implements
                     MIN_DISTANCE, this);
 
             if (googleMap == null) {
-                Toast.makeText(getApplicationContext(),
+                Toast.makeText(getApplication(),
                         "Unable to create the map", Toast.LENGTH_SHORT)
                         .show();
             }
@@ -217,7 +217,7 @@ public class GoogleMaps extends FragmentActivity implements
         double latitude = latLng.latitude;
         double longitude = latLng.longitude;
 
-        Toast.makeText(this.getApplicationContext(),
+        Toast.makeText(this.getApplication(),
                 "Latitude: " + latitude + " Longitude: " + longitude,
                 Toast.LENGTH_SHORT).show();
         //Rmove old location and add a new marker

@@ -25,11 +25,15 @@ public class Database extends SQLiteOpenHelper {
     public static final String APPOINTMENT_TABLE_NAME = "appointments";
     public static final String APPOINTMENT_COLUMN_NAME_TITLE = "title";
     public static final String APPOINTMENT_COLUMN_NAME_DETAIL = "detail";
+    public static final String APPOINTMENT_COLUMN_NAME_DATE = "date";
+    public static final String APPOINTMENT_COLUMN_NAME_TIME = "time";
     public static final String APPOINTMENT_COLUMN_NAME_LATITUDE = "latitude";
     public static final String APPOINTMENT_COLUMN_NAME_LONGITUDE = "longitude";
     public static final String APPOINTMENT_COLUMN_NAME_PIC = "pic";
     public static final String[] APPOINTMENT_COLUMNS = {APPOINTMENT_COLUMN_NAME_TITLE,
             APPOINTMENT_COLUMN_NAME_DETAIL,
+            APPOINTMENT_COLUMN_NAME_DATE,
+            APPOINTMENT_COLUMN_NAME_TIME,
             APPOINTMENT_COLUMN_NAME_LATITUDE,
             APPOINTMENT_COLUMN_NAME_LONGITUDE,
             APPOINTMENT_COLUMN_NAME_PIC};
@@ -38,6 +42,8 @@ public class Database extends SQLiteOpenHelper {
             "CREATE TABLE " + APPOINTMENT_TABLE_NAME + " (" +
                     APPOINTMENT_COLUMN_NAME_TITLE + " TEXT PRIMARY KEY," +
                     APPOINTMENT_COLUMN_NAME_DETAIL + " TEXT," +
+                    APPOINTMENT_COLUMN_NAME_DATE + " TEXT," +
+                    APPOINTMENT_COLUMN_NAME_TIME + " TEXT," +
                     APPOINTMENT_COLUMN_NAME_LATITUDE + " TEXT," +
                     APPOINTMENT_COLUMN_NAME_LONGITUDE + " TEXT," +
                     APPOINTMENT_COLUMN_NAME_PIC + " BLOB" +
@@ -108,6 +114,8 @@ public class Database extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put(APPOINTMENT_COLUMN_NAME_TITLE, appointment.title);
         values.put(APPOINTMENT_COLUMN_NAME_DETAIL, appointment.detail);
+        values.put(APPOINTMENT_COLUMN_NAME_DATE, appointment.date);
+        values.put(APPOINTMENT_COLUMN_NAME_TIME, appointment.time);
         values.put(APPOINTMENT_COLUMN_NAME_LATITUDE, "" + appointment.latitude);
         values.put(APPOINTMENT_COLUMN_NAME_LONGITUDE, "" + appointment.longitude);
         values.put(APPOINTMENT_COLUMN_NAME_PIC, appointment.pic);
@@ -146,6 +154,8 @@ public class Database extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put(APPOINTMENT_COLUMN_NAME_TITLE, appointment.title);
         values.put(APPOINTMENT_COLUMN_NAME_DETAIL, appointment.detail);
+        values.put(APPOINTMENT_COLUMN_NAME_DATE, appointment.date);
+        values.put(APPOINTMENT_COLUMN_NAME_TIME, appointment.time);
         values.put(APPOINTMENT_COLUMN_NAME_LATITUDE, appointment.latitude);
         values.put(APPOINTMENT_COLUMN_NAME_LONGITUDE, appointment.longitude);
         values.put(APPOINTMENT_COLUMN_NAME_PIC, appointment.pic);
@@ -168,9 +178,11 @@ public class Database extends SQLiteOpenHelper {
                 cursor.moveToFirst();
                 appointment.title = cursor.getString(0);
                 appointment.detail = cursor.getString(1);
-                appointment.latitude = Double.parseDouble(cursor.getString(2));
-                appointment.longitude = Double.parseDouble(cursor.getString(3));
-                appointment.pic = cursor.getBlob(4);
+                appointment.date = cursor.getString(2);
+                appointment.time = cursor.getString(3);
+                appointment.latitude = Double.parseDouble(cursor.getString(4));
+                appointment.longitude = Double.parseDouble(cursor.getString(5));
+                appointment.pic = cursor.getBlob(6);
 
                 cursor.close();
                 return appointment;
@@ -197,9 +209,11 @@ public class Database extends SQLiteOpenHelper {
                 appointment = new Appointment();
                 appointment.title = cursor.getString(0);
                 appointment.detail = cursor.getString(1);
-                appointment.latitude = Double.parseDouble(cursor.getString(2));
-                appointment.longitude = Double.parseDouble(cursor.getString(3));
-                appointment.pic = cursor.getBlob(2);
+                appointment.date = cursor.getString(2);
+                appointment.time = cursor.getString(3);
+                appointment.latitude = Double.parseDouble(cursor.getString(4));
+                appointment.longitude = Double.parseDouble(cursor.getString(5));
+                appointment.pic = cursor.getBlob(6);
 
                 appointments.add(appointment);
             } while (cursor.moveToNext());
