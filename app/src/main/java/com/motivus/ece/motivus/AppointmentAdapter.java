@@ -22,6 +22,7 @@ public class AppointmentAdapter extends ArrayAdapter {
     }
 
     private class ViewHolder{
+        TextView dateText;
         TextView titleText;
     }
 
@@ -34,6 +35,7 @@ public class AppointmentAdapter extends ArrayAdapter {
         if (convertView == null) {
             viewToUse = mInflater.inflate(R.layout.fragment_row, null);
             holder = new ViewHolder();
+            holder.dateText = (TextView)viewToUse.findViewById(R.id.text_date);
             holder.titleText = (TextView)viewToUse.findViewById(R.id.text_title);
             viewToUse.setTag(holder);
         } else {
@@ -41,6 +43,7 @@ public class AppointmentAdapter extends ArrayAdapter {
             holder = (ViewHolder) viewToUse.getTag();
         }
 
+        holder.dateText.setText(item.date + " " + item.time);
         holder.titleText.setText(item.title);
         return viewToUse;
     }

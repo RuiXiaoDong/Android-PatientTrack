@@ -12,7 +12,7 @@
 
     <Button
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="60dp"
         android:text="New Appointment"
         android:id="@+id/button_newappointment"
         android:layout_alignParentTop="true"
