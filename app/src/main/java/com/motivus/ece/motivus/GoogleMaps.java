@@ -39,10 +39,10 @@ import java.util.List;
  */
 public class GoogleMaps extends FragmentActivity implements
         GoogleMap.OnMapClickListener, LocationListener {
-    private GoogleMap googleMap;
+    private GoogleMap mGoogleMap;
     private UiSettings uiSettings;
     private Marker selectedLocation;
-    private LocationManager locationManager;
+    private LocationManager mLocationManager;
     private static final long MIN_TIME = 400;
     private static final float MIN_DISTANCE = 1000;
     private LatLng latLng;
@@ -97,52 +97,29 @@ public class GoogleMaps extends FragmentActivity implements
     }
 
     private void initializeMap() {
-        final LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            alertTurnOnGPS();
+        mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        if (!mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            HelperFunctions.alertTurnOnGPS(this);
         }
 
-        if (googleMap == null) {
-            googleMap = ((SupportMapFragment)getSupportFragmentManager().findFragmentById(R.id.map)).getMap();
-            googleMap.setOnMapClickListener(this);
-            googleMap.setMyLocationEnabled(true);
+        if (mGoogleMap == null) {
+            mGoogleMap = ((SupportMapFragment)getSupportFragmentManager().findFragmentById(R.id.map)).getMap();
+            mGoogleMap.setOnMapClickListener(this);
+            mGoogleMap.setMyLocationEnabled(true);
 
-            uiSettings = googleMap.getUiSettings();
+            uiSettings = mGoogleMap.getUiSettings();
             uiSettings.setAllGesturesEnabled(true);
 
-            locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-            locationManager.requestLocationUpdates(
+            mLocationManager.requestLocationUpdates(
                     LocationManager.NETWORK_PROVIDER, MIN_TIME,
                     MIN_DISTANCE, this);
 
-            if (googleMap == null) {
+            if (mGoogleMap == null) {
                 Toast.makeText(getApplication(),
                         "Unable to create the map", Toast.LENGTH_SHORT)
                         .show();
             }
         }
-    }
-
-    private void alertTurnOnGPS() {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Do you want to enable GPS?")
-                .setCancelable(false)
-                .setPositiveButton("Yes",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(final DialogInterface dialog,
-                                                final int id) {
-                                startActivity(new Intent(
-                                        android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
-                            }
-                        })
-                .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    public void onClick(final DialogInterface dialog,
-                                        final int id) {
-                        dialog.cancel();
-                    }
-                });
-        final AlertDialog alert = builder.create();
-        alert.show();
     }
 
     @Override
@@ -182,7 +159,7 @@ public class GoogleMaps extends FragmentActivity implements
             }
 
             // Clears all the existing markers on the map
-            googleMap.clear();
+            mGoogleMap.clear();
 
             // Adding Markers on Google Map for each matching address
             for (int i = 0; i < addresses.size(); i++) {
@@ -199,13 +176,13 @@ public class GoogleMaps extends FragmentActivity implements
                 markerOptions.position(latLng);
                 markerOptions.title(addressText);
 
-                googleMap.addMarker(markerOptions);
+                mGoogleMap.addMarker(markerOptions);
 
                 // Locate the first location
                 if (i == 0) {
                     CameraPosition cameraPosition = new CameraPosition.Builder().target(
                             latLng).zoom(12).build();
-                    googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                    mGoogleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
                 }
             }
         }
@@ -223,7 +200,7 @@ public class GoogleMaps extends FragmentActivity implements
         //Rmove old location and add a new marker
         if (selectedLocation != null)
             selectedLocation.remove();
-        selectedLocation = googleMap.addMarker(new MarkerOptions()
+        selectedLocation = mGoogleMap.addMarker(new MarkerOptions()
                 .position(latLng)
                 .draggable(true)
                 .icon(BitmapDescriptorFactory
@@ -240,9 +217,9 @@ public class GoogleMaps extends FragmentActivity implements
                 location.getLongitude());
         CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng,
                 10);
-        googleMap.animateCamera(cameraUpdate);
-        locationManager.removeUpdates(this);
-        googleMap.getMaxZoomLevel();
+        mGoogleMap.animateCamera(cameraUpdate);
+        mLocationManager.removeUpdates(this);
+        mGoogleMap.getMaxZoomLevel();
     }
 
     @Override

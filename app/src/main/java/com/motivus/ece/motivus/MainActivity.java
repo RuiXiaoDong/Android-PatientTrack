@@ -12,10 +12,12 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.preference.PreferenceManager;
 import android.support.v4.app.ListFragment;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
@@ -51,7 +53,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
      *              If A and B are as close as 100 meters, then we consider them as one location
      */
     private final float LOCATION_THRESHOLD_DISTANCE = 200;
-    private final float LOCATION_LOG_THRESHOLD_DISTANCE = 50;
+    private final float LOCATION_LOG_THRESHOLD_DISTANCE = 500;
     /**
      *
      */
@@ -115,15 +117,25 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //Get setting preference
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+        Boolean gpsSwitch = sharedPrefs.getBoolean("gps_checkbox", true);
+
+        //Check GPS on or off
+        mLocationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
+        if (!mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            HelperFunctions.alertTurnOnGPS(this);
+        }
+        //Constantly monitoring the GPS location
+        mLocationManager.removeUpdates(mLocationListener);
+        mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, LOCATION_REFRESH_TIME, LOCATION_REFRESH_DISTANCE,mLocationListener);
+
         //Set up the database
         db_appointment = Database.getInstance(this);
 
         //Set up the action bar.
         final ActionBar actionBar = getSupportActionBar();
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-
-        //get the location manager
-        mLocationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
 
         //Set up the ViewPager with the sections adapter.
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
@@ -133,8 +145,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             @Override
             public void onPageSelected(int position) {
                 actionBar.setSelectedNavigationItem(position);
-               //
-               // mSectionsPagerAdapter.notifyDataSetChanged();
+                //mSectionsPagerAdapter.notifyDataSetChanged();
             }
             public void onPageScrollStateChanged(int state) {
             }
@@ -158,14 +169,11 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
     @Override
     protected void onResume() {
         super.onResume();
-        //Constantly monitoring the GPS location
-        this.mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, LOCATION_REFRESH_TIME, LOCATION_REFRESH_DISTANCE,mLocationListener);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        this.mLocationManager.removeUpdates(mLocationListener);
     }
 
     @Override
@@ -184,6 +192,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            startActivity(new Intent(this, SettingsActivity.class));
             return true;
         }
 
@@ -256,28 +265,6 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             }
             return null;
         }
-    }
-
-    private void alertTurnOnGPS() {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Do you want to enable GPS?")
-                .setCancelable(false)
-                .setPositiveButton("Yes",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(final DialogInterface dialog,
-                                                final int id) {
-                                startActivity(new Intent(
-                                        android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
-                            }
-                        })
-                .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    public void onClick(final DialogInterface dialog,
-                                        final int id) {
-                        dialog.cancel();
-                    }
-                });
-        final AlertDialog alert = builder.create();
-        alert.show();
     }
 
     public static class AppointmentFragment extends ListFragment {

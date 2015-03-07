@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.motivus.ece.motivus">
+    package="com.motivus.ece.motivus" >
+
     <permission
         android:name="info.androidhive.googlemapsv2.permission.MAPS_RECEIVE"
         android:protectionLevel="signature" />
+
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
@@ -17,7 +19,6 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
-
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
@@ -26,9 +27,9 @@
             android:value="AIzaSyCrR9VZhVBDk9lM9RF6fySY4IK73fb_Tpk" />
 
         <activity
-            android:screenOrientation="portrait"
             android:name=".MainActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -36,18 +37,22 @@
             </intent-filter>
         </activity>
         <activity
-            android:screenOrientation="portrait"
             android:name=".NewAppointment"
-            android:label="@string/title_activity_new_appointment" >
+            android:label="@string/title_activity_new_appointment"
+            android:screenOrientation="portrait" >
         </activity>
         <activity
-            android:screenOrientation="portrait"
-            android:name="com.motivus.ece.motivus.GoogleMaps"
-            android:label="@string/app_name"></activity>
+            android:name=".GoogleMaps"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait" />
         <activity
-            android:screenOrientation="portrait"
-            android:name="com.motivus.ece.motivus.TrackingMap"
-            android:label="@string/app_name"></activity>
+            android:name=".TrackingMap"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".SettingsActivity"
+            android:label="@string/title_activity_settings" >
+        </activity>
     </application>
 
 </manifest>
