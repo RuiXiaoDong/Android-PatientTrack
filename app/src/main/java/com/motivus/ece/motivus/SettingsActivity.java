@@ -43,9 +43,6 @@ public class SettingsActivity extends PreferenceActivity {
         }
 
         addPreferencesFromResource(R.xml.pref_general);
-        bindPreferenceSummaryToValue(findPreference("gps_switch"));
-        //bindPreferenceSummaryToValue(findPreference("example_text"));
-        //bindPreferenceSummaryToValue(findPreference("example_list"));
     }
 
     /**
@@ -79,17 +76,6 @@ public class SettingsActivity extends PreferenceActivity {
     }
 
     /**
-     * {@inheritDoc}
-     */
-    @Override
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    public void onBuildHeaders(List<Header> target) {
-        if (!isSimplePreferences(this)) {
-            loadHeadersFromResource(R.xml.pref_headers, target);
-        }
-    }
-
-    /**
      * A preference value change listener that updates the preference's summary
      * to reflect its new value.
      */
@@ -119,42 +105,4 @@ public class SettingsActivity extends PreferenceActivity {
             return true;
         }
     };
-
-    /**
-     * Binds a preference's summary to its value. More specifically, when the
-     * preference's value is changed, its summary (line of text below the
-     * preference title) is updated to reflect the value. The summary is also
-     * immediately updated upon calling this method. The exact display format is
-     * dependent on the type of preference.
-     *
-     * @see #sBindPreferenceSummaryToValueListener
-     */
-    private static void bindPreferenceSummaryToValue(Preference preference) {
-        // Set the listener to watch for value changes.
-        preference.setOnPreferenceChangeListener(sBindPreferenceSummaryToValueListener);
-
-        // Trigger the listener immediately with the preference's
-        // current value.
-        sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,
-                PreferenceManager
-                        .getDefaultSharedPreferences(preference.getContext())
-                        .getBoolean(preference.getKey(), true));
-    }
-
-    /**
-     * This fragment shows general preferences only. It is used when the
-     * activity is showing a two-pane settings UI.
-     */
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    public static class GeneralPreferenceFragment extends PreferenceFragment {
-        @Override
-        public void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            addPreferencesFromResource(R.xml.pref_general);
-
-            bindPreferenceSummaryToValue(findPreference("gps_switch"));
-            bindPreferenceSummaryToValue(findPreference("example_text"));
-            bindPreferenceSummaryToValue(findPreference("example_list"));
-        }
-    }
 }

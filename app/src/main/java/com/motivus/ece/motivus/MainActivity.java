@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.prefs.PreferenceChangeListener;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -17,6 +18,7 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.preference.Preference;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ListFragment;
 import android.support.v7.app.ActionBarActivity;
@@ -60,8 +62,9 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
     double mLastLatitude = 0;
     double mLastLongitude = 0;
 
+    private PreferenceChangeListener mPreferenceListener = null;
+    private SharedPreferences mSharedPreferences;
     private LocationManager mLocationManager;
-
     private Database db_appointment;
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private ViewPager mViewPager;
@@ -118,8 +121,9 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         setContentView(R.layout.activity_main);
 
         //Get setting preference
-        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
-        Boolean gpsSwitch = sharedPrefs.getBoolean("gps_checkbox", true);
+        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        mPreferenceListener = new PreferenceChangeListener();
+        mSharedPreferences.registerOnSharedPreferenceChangeListener(mPreferenceListener);
 
         //Check GPS on or off
         mLocationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
@@ -462,5 +466,23 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
     public void onDestroy() {
         super.onDestroy();
         db_appointment.close();
+    }
+
+    private class PreferenceChangeListener implements SharedPreferences.OnSharedPreferenceChangeListener {
+        @Override
+        public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
+            ApplySettings();
+        }
+    }
+
+    public void ApplySettings() {
+        boolean gpsSwitch = mSharedPreferences.getBoolean("gps_switch", true);
+        if(gpsSwitch) {
+            mLocationManager.removeUpdates(mLocationListener);
+            mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, LOCATION_REFRESH_TIME, LOCATION_REFRESH_DISTANCE,mLocationListener);
+        }
+        else {
+            mLocationManager.removeUpdates(mLocationListener);
+        }
     }
 }
