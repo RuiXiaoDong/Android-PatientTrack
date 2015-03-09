@@ -19,6 +19,9 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
+        android:textColor="#ffffff"
+        android:background="#ff1f75ff"
+        android:textStyle="bold|normal|italic"
         android:height="60dp" />
 
 </RelativeLayout>

@@ -19,7 +19,10 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignRight="@android:id/list"
-        android:layout_alignEnd="@android:id/list" />
+        android:layout_alignEnd="@android:id/list"
+        android:textColor="#ffffff"
+        android:background="#ff1f75ff"
+        android:textStyle="bold|normal|italic" />
 
     <ListView
         android:layout_width="wrap_content"
