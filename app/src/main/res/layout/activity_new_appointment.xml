@@ -68,14 +68,16 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Choose Location"
+        android:text="Set Location"
         android:id="@+id/button_location"
         android:layout_alignBottom="@+id/editText_location"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:background="#ff1f75ff"
         android:textColor="#ffffffff"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:layout_margin="10dp"
+        android:width="120dp" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -144,11 +146,14 @@
         android:id="@+id/button_timePicker"
         android:layout_alignTop="@+id/editText_date"
         android:layout_toRightOf="@+id/editText_date"
-        android:layout_alignRight="@+id/button_location"
-        android:layout_alignEnd="@+id/button_location"
         android:layout_alignBottom="@+id/editText_time"
         android:textStyle="bold"
         android:textColor="#ffffffff"
-        android:background="#ff1f75ff" />
+        android:background="#ff1f75ff"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_alignRight="@+id/button_location"
+        android:layout_alignEnd="@+id/button_location" />
 
 </RelativeLayout>
