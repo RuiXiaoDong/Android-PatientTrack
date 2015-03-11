@@ -21,6 +21,7 @@ import android.widget.Toast;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -35,7 +36,7 @@ import java.util.List;
 /**
  * Created by dongx
  */
-public class GoogleMaps extends FragmentActivity implements
+public class GoogleMaps extends FragmentActivity implements OnMapReadyCallback,
         GoogleMap.OnMapClickListener, LocationListener {
     private GoogleMap mGoogleMap;
     private UiSettings uiSettings;
@@ -187,6 +188,19 @@ public class GoogleMaps extends FragmentActivity implements
     }
 
     @Override
+    public void onMapReady(GoogleMap map) {
+        LatLng sydney = new LatLng(-33.867, 151.206);
+
+        map.setMyLocationEnabled(true);
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 13));
+
+        map.addMarker(new MarkerOptions()
+                .title("Sydney")
+                .snippet("The most populous city in Australia.")
+                .position(sydney));
+    }
+
+    @Override
     public void onMapClick(LatLng latLng) {
         this.latLng = latLng;
         double latitude = latLng.latitude;
@@ -236,28 +250,5 @@ public class GoogleMaps extends FragmentActivity implements
     public void onStatusChanged(String arg0, int arg1, Bundle arg2) {
         // TODO Auto-generated method stub
 
-    }
-
-    /**
-     * Calculates the distance between two locations in KM
-     */
-    public static double checkDistance(double lat1, double lng1, double lat2, double lng2) {
-
-        double earthRadius = 6371;
-
-        double dLat = Math.toRadians(lat2-lat1);
-        double dLng = Math.toRadians(lng2-lng1);
-
-        double sindLat = Math.sin(dLat / 2);
-        double sindLng = Math.sin(dLng / 2);
-
-        double a = Math.pow(sindLat, 2) + Math.pow(sindLng, 2)
-                * Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2));
-
-        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-
-        double dist = earthRadius * c * 1000;
-
-        return dist; // in meter
     }
 }

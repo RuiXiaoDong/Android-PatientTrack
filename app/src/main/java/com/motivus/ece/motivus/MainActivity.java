@@ -35,25 +35,8 @@ import android.widget.Toast;
 
 public class MainActivity extends ActionBarActivity implements ActionBar.TabListener {
     /**
-     * The refresh time
-     */
-    private final long LOCATION_REFRESH_TIME = 1000;
-    /**
      * The refresh distance is set to 0 meter, which means the update does not depend on distance
      */
-    private final float LOCATION_REFRESH_DISTANCE = 0;
-    /**
-     * The distance threshold in meter.
-     * For example, A is current location, and B is the target location
-     *              If A and B are as close as 100 meters, then we consider them as one location
-     */
-    private final float LOCATION_THRESHOLD_DISTANCE = 200;
-    private final float LOCATION_LOG_THRESHOLD_DISTANCE = 500;
-    /**
-     *
-     */
-    double mLastLatitude = 0;
-    double mLastLongitude = 0;
 
     private PreferenceChangeListener mPreferenceListener = null;
     private SharedPreferences mSharedPreferences;
@@ -61,52 +44,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
     private Database db_appointment;
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private ViewPager mViewPager;
-    private final LocationListener mLocationListener = new LocationListener() {
-        @Override
-        public void onLocationChanged(final Location location) {
-            double latitude = location.getLatitude();
-            double longitude = location.getLongitude();
 
-            DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd-HH:mm:ss");
-            Date date = new Date();
-            GPSlocation gpsLocation = new GPSlocation();
-            gpsLocation.time = dateFormat.format(date);
-            gpsLocation.latitude = latitude;
-            gpsLocation.longitude = longitude;
-            double logDiffDistance = GoogleMaps.checkDistance(latitude, longitude, mLastLatitude, mLastLongitude);
-            if (logDiffDistance >= LOCATION_LOG_THRESHOLD_DISTANCE) {
-                Database.getInstance(getApplication()).addGPS(gpsLocation);
-                mLastLatitude = latitude;
-                mLastLongitude = longitude;
-            }
-
-            //Compare appointment location
-            ArrayList<Appointment> appointments = Database.getInstance(getApplication()).getAllAppointments();
-            for(int i = 0; i <  appointments.size(); i++) {
-                double diffDistance = GoogleMaps.checkDistance(latitude, longitude, appointments.get(i).latitude, appointments.get(i).longitude);
-                if (diffDistance <= LOCATION_THRESHOLD_DISTANCE) {
-                    appointments.get(i).check = true;
-                    Toast.makeText(getApplication(),
-                            "\"" + appointments.get(i).title + "\" appointment DONE!" , Toast.LENGTH_SHORT)
-                            .show();
-                }
-            }
-        }
-
-        @Override
-        public void onStatusChanged(String provider, int status, Bundle extras) {
-
-        }
-
-        @Override
-        public void onProviderEnabled(String provider) {
-        }
-
-        @Override
-        public void onProviderDisabled(String provider) {
-
-        }
-    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,8 +62,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             HelperFunctions.alertTurnOnGPS(this);
         }
         //Constantly monitoring the GPS location
-        mLocationManager.removeUpdates(mLocationListener);
-        mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, LOCATION_REFRESH_TIME, LOCATION_REFRESH_DISTANCE,mLocationListener);
+        startService(new Intent(this, GPSlocationTracingService.class));
 
         //Set up the database
         db_appointment = Database.getInstance(this);
@@ -471,11 +408,11 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
     public void ApplySettings() {
         boolean gpsSwitch = mSharedPreferences.getBoolean("gps_switch", true);
         if(gpsSwitch) {
-            mLocationManager.removeUpdates(mLocationListener);
-            mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, LOCATION_REFRESH_TIME, LOCATION_REFRESH_DISTANCE,mLocationListener);
+            stopService(new Intent(this, GPSlocationTracingService.class));
+            startService(new Intent(this, GPSlocationTracingService.class));
         }
         else {
-            mLocationManager.removeUpdates(mLocationListener);
+            stopService(new Intent(this, GPSlocationTracingService.class));
         }
     }
 }
