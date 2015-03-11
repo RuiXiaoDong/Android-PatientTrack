@@ -408,7 +408,6 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
     public void ApplySettings() {
         boolean gpsSwitch = mSharedPreferences.getBoolean("gps_switch", true);
         if(gpsSwitch) {
-            stopService(new Intent(this, GPSlocationTracingService.class));
             startService(new Intent(this, GPSlocationTracingService.class));
         }
         else {

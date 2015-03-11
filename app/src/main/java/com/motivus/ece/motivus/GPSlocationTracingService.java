@@ -9,11 +9,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.location.LocationManager;
 import android.os.PowerManager;
-import android.provider.SyncStateContract;
 import android.widget.Toast;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -28,11 +24,11 @@ public class GPSlocationTracingService extends Service {
     double mLastLatitude = 0;
     double mLastLongitude = 0;
 
-    private final float LOCATION_REFRESH_DISTANCE = 0;
+    private final float LOCATION_REFRESH_DISTANCE = 2500;
     private final long LOCATION_REFRESH_TIME = 1000;
     private final float LOCATION_THRESHOLD_DISTANCE = 200;
-    private final float LOCATION_LOG_THRESHOLD_DISTANCE = 500;
 
+    private boolean mRunning;
     public GPSlocationTracingService() {
     }
 
@@ -43,12 +39,23 @@ public class GPSlocationTracingService extends Service {
     }
 
     @Override
+    public int onStartCommand(Intent intent, int flags, int startId)
+    {
+        if (!mRunning) {
+            mRunning = true;
+            // do something
+        }
+        return super.onStartCommand(intent, flags, startId);
+    }
+
+    @Override
     public void onCreate() {
         // TODO Auto-generated method stub
         super.onCreate();
 
         PowerManager pm = (PowerManager) getSystemService(this.POWER_SERVICE);
         wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "DoNotSleep");
+        wakeLock.acquire();
 
         Toast.makeText(getApplicationContext(), "Service Created",
                 Toast.LENGTH_SHORT).show();
@@ -73,7 +80,6 @@ public class GPSlocationTracingService extends Service {
     public void onDestroy() {
         // TODO Auto-generated method stub
         super.onDestroy();
-
         wakeLock.release();
     }
 
@@ -90,7 +96,7 @@ public class GPSlocationTracingService extends Service {
             gpsLocation.latitude = latitude;
             gpsLocation.longitude = longitude;
             double logDiffDistance = HelperFunctions.checkDistance(latitude, longitude, mLastLatitude, mLastLongitude);
-            if (logDiffDistance >= LOCATION_LOG_THRESHOLD_DISTANCE) {
+            if (logDiffDistance >= LOCATION_THRESHOLD_DISTANCE) {
                 Database.getInstance(getApplication()).addGPS(gpsLocation);
                 mLastLatitude = latitude;
                 mLastLongitude = longitude;
