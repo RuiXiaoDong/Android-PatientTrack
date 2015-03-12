@@ -24,8 +24,9 @@ public class GPSlocationTracingService extends Service {
     double mLastLatitude = 0;
     double mLastLongitude = 0;
 
-    private final float LOCATION_REFRESH_DISTANCE = 100;
+    private final float LOCATION_REFRESH_DISTANCE = 0;
     private final long LOCATION_REFRESH_TIME = 5000;
+    private final float LOCATION_THRESHOLD_DISTANCE = 1000;
 
     private boolean mRunning;
     public GPSlocationTracingService() {
@@ -49,7 +50,6 @@ public class GPSlocationTracingService extends Service {
 
     @Override
     public void onCreate() {
-        // TODO Auto-generated method stub
         super.onCreate();
 
         PowerManager pm = (PowerManager) getSystemService(this.POWER_SERVICE);
@@ -63,23 +63,24 @@ public class GPSlocationTracingService extends Service {
     @Override
     @Deprecated
     public void onStart(Intent intent, int startId) {
-        // TODO Auto-generated method stub
         super.onStart(intent, startId);
 
         mLocationManager = (LocationManager) getApplicationContext()
                 .getSystemService(Context.LOCATION_SERVICE);
-
         mLocationManager.removeUpdates(mLocationListener);
-        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+        mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
                 LOCATION_REFRESH_TIME, LOCATION_REFRESH_DISTANCE, mLocationListener);
 
     }
 
     @Override
     public void onDestroy() {
-        // TODO Auto-generated method stub
         super.onDestroy();
+        mLocationManager.removeUpdates(mLocationListener);
         wakeLock.release();
+
+        Toast.makeText(getApplicationContext(), "Service Destroyed",
+                Toast.LENGTH_SHORT).show();
     }
 
     private final LocationListener mLocationListener = new LocationListener() {
@@ -105,7 +106,7 @@ public class GPSlocationTracingService extends Service {
             ArrayList<Appointment> appointments = Database.getInstance(getApplication()).getAllAppointments();
             for(int i = 0; i <  appointments.size(); i++) {
                 double diffDistance = HelperFunctions.checkDistance(latitude, longitude, appointments.get(i).latitude, appointments.get(i).longitude);
-                if (diffDistance <= LOCATION_REFRESH_DISTANCE) {
+                if (diffDistance <= LOCATION_THRESHOLD_DISTANCE) {
                     appointments.get(i).check = true;
                     Toast.makeText(getApplication(),
                             "\"" + appointments.get(i).title + "\" appointment DONE!" , Toast.LENGTH_SHORT)

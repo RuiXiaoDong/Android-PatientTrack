@@ -4,8 +4,18 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Created by dongx on 2015-03-06.
@@ -68,5 +78,32 @@ public class HelperFunctions {
         double dist = earthRadius * c * 1000;
 
         return dist; // in meter
+    }
+
+    public static Bitmap getGoogleMapThumbnail(double latitude, double longitude){
+
+        String URL = "http://maps.google.com/maps/api/staticmap?center=" +latitude + "," + longitude + "&zoom=15&size=600x600&sensor=false";
+
+        Bitmap bmp = null;
+        HttpClient httpclient = new DefaultHttpClient();
+        HttpGet request = new HttpGet(URL);
+
+        InputStream in = null;
+        try {
+            in = httpclient.execute(request).getEntity().getContent();
+            bmp = BitmapFactory.decodeStream(in);
+            in.close();
+        } catch (IllegalStateException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (ClientProtocolException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        return bmp;
     }
 }
