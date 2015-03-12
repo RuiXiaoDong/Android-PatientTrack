@@ -21,6 +21,7 @@ public class Database extends SQLiteOpenHelper {
 
     public static final String DATABASE_NAME = "Appointments.db";
     public static final int DATABASE_VERSION = 1;
+
     //Appointment table
     public static final String APPOINTMENT_TABLE_NAME = "appointments";
     public static final String APPOINTMENT_COLUMN_NAME_TITLE = "title";
@@ -68,6 +69,12 @@ public class Database extends SQLiteOpenHelper {
             " )";
     public static final String GPS_SQL_DELETE_ENTRIES =
             "DROP TABLE IF EXISTS " + GPS_TABLE_NAME;
+
+    //GPS table
+    public static final String SMS_TABLE_NAME = "sms";
+    public static final String SMS_COLUMN_NAME_TIME = "time";
+    public static final String[] SMS_COLUMNS = {SMS_TABLE_NAME,
+            SMS_COLUMN_NAME_TIME};
 
     public static Database getInstance(Context ctx) {
         if (mInstance == null) {

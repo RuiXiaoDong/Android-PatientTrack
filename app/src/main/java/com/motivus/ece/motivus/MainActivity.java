@@ -1,17 +1,12 @@
 package com.motivus.ece.motivus;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ListFragment;
@@ -31,7 +26,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class MainActivity extends ActionBarActivity implements ActionBar.TabListener {
     /**
@@ -41,10 +35,9 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
     private PreferenceChangeListener mPreferenceListener = null;
     private SharedPreferences mSharedPreferences;
     private LocationManager mLocationManager;
-    private Database db_appointment;
+    private Database mDatabase;
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private ViewPager mViewPager;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,11 +54,14 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         if (!mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
             HelperFunctions.alertTurnOnGPS(this);
         }
+
         //Constantly monitoring the GPS location
         startService(new Intent(this, GPSlocationTracingService.class));
+        //Constantly monitoring the photo usage
+        startService(new Intent(this, PhotoUsageTracingService.class));
 
         //Set up the database
-        db_appointment = Database.getInstance(this);
+        mDatabase = Database.getInstance(this);
 
         //Set up the action bar.
         final ActionBar actionBar = getSupportActionBar();
@@ -395,7 +391,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
     @Override
     public void onDestroy() {
         super.onDestroy();
-        db_appointment.close();
+        mDatabase.close();
     }
 
     private class PreferenceChangeListener implements SharedPreferences.OnSharedPreferenceChangeListener {
