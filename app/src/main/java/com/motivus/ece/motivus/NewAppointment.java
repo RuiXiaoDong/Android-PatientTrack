@@ -51,12 +51,12 @@ public class NewAppointment extends ActionBarActivity {
         timePicker.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Calendar mcurrentTime = Calendar.getInstance();
-                int year = mcurrentTime.get(Calendar.YEAR);
-                int month = mcurrentTime.get(Calendar.MONTH);
-                int day = mcurrentTime.get(Calendar.DAY_OF_MONTH);
-                int hour = mcurrentTime.get(Calendar.HOUR_OF_DAY);
-                int minute = mcurrentTime.get(Calendar.MINUTE);
+                Calendar calendar = Calendar.getInstance();
+                int year = calendar.get(Calendar.YEAR);
+                int month = calendar.get(Calendar.MONTH);
+                int day = calendar.get(Calendar.DAY_OF_MONTH);
+                int hour = calendar.get(Calendar.HOUR_OF_DAY);
+                int minute = calendar.get(Calendar.MINUTE);
 
                 //Pick time within the day
                 TimePickerDialog mTimePicker;
@@ -75,6 +75,7 @@ public class NewAppointment extends ActionBarActivity {
                 mDatePicker = new DatePickerDialog(NewAppointment.this, new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker timePicker, int year, int monthOfYear, int dayOfMonth) {
+                        monthOfYear = monthOfYear + 1;
                         String months = (monthOfYear < 10 ) ? "0" + monthOfYear : "" + monthOfYear;
                         String days = (dayOfMonth < 10) ? "0" + dayOfMonth : "" + dayOfMonth;
                         dateAppointment.setText(year + "-" + months + "-" + days);

@@ -9,7 +9,6 @@ import android.database.ContentObserver;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.IBinder;
-import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.widget.Toast;
 

@@ -12,9 +12,12 @@ import android.os.PowerManager;
 import android.widget.Toast;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 public class GPSlocationTracingService extends Service {
 
@@ -26,7 +29,9 @@ public class GPSlocationTracingService extends Service {
 
     private final float LOCATION_REFRESH_DISTANCE = 0;
     private final long LOCATION_REFRESH_TIME = 5000;
-    private final float LOCATION_THRESHOLD_DISTANCE = 1000;
+
+    private float LOCATION_THRESHOLD_DISTANCE = 1000; //in meter
+    private float LOCATION_THRESHOLD_TIME = 30; //in min
 
     private boolean mRunning;
     public GPSlocationTracingService() {
@@ -83,6 +88,52 @@ public class GPSlocationTracingService extends Service {
                 Toast.LENGTH_SHORT).show();
     }
 
+    /**
+     * Compare appointment location
+     * @param latitude
+     * @param longitude
+     */
+    private void checkAppointmentAccomplishment(double latitude, double longitude){
+        ArrayList<Appointment> appointments = Database.getInstance(getApplication()).getAllAppointments();
+        for(int i = 0; i <  appointments.size(); i++) {
+            //Check the date
+            Calendar calendar = Calendar.getInstance();
+            int year = calendar.get(Calendar.YEAR);
+            int month = calendar.get(Calendar.MONTH);
+            int day = calendar.get(Calendar.DAY_OF_MONTH);
+            int hour = calendar.get(Calendar.HOUR_OF_DAY);
+            int minute = calendar.get(Calendar.MINUTE);
+
+            Date currentDate = calendar.getTime();
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+            String appointmentDate = "" + appointments.get(i).date + ' ' + appointments.get(i).time;
+            Date compateDate;
+
+            try {
+                compateDate = formatter.parse(appointmentDate);
+            } catch (ParseException e) {
+                e.printStackTrace();
+                continue;
+            }
+            long diff = currentDate.getTime() - compateDate.getTime();
+            int diffDays = (int) (diff / (24 * 60 * 60 * 1000));
+            int diffhours = (int) (diff / (60 * 60 * 1000));
+            int diffmin = (int) (diff / (60 * 1000));
+            int diffsec = (int) (diff / (1000));
+
+            if(diffmin <= LOCATION_THRESHOLD_TIME) {
+                double diffDistance = HelperFunctions.checkDistance(latitude, longitude, appointments.get(i).latitude, appointments.get(i).longitude);
+                //Check the location
+                if (diffDistance <= LOCATION_THRESHOLD_DISTANCE) {
+                    appointments.get(i).check = true;
+                    Toast.makeText(getApplication(),
+                            "\"" + appointments.get(i).title + "\" appointment DONE!", Toast.LENGTH_SHORT)
+                            .show();
+                }
+            }
+        }
+    }
+
     private final LocationListener mLocationListener = new LocationListener() {
         @Override
         public void onLocationChanged(final Location location) {
@@ -102,17 +153,7 @@ public class GPSlocationTracingService extends Service {
                 mLastLongitude = longitude;
             }
 
-            //Compare appointment location
-            ArrayList<Appointment> appointments = Database.getInstance(getApplication()).getAllAppointments();
-            for(int i = 0; i <  appointments.size(); i++) {
-                double diffDistance = HelperFunctions.checkDistance(latitude, longitude, appointments.get(i).latitude, appointments.get(i).longitude);
-                if (diffDistance <= LOCATION_THRESHOLD_DISTANCE) {
-                    appointments.get(i).check = true;
-                    Toast.makeText(getApplication(),
-                            "\"" + appointments.get(i).title + "\" appointment DONE!" , Toast.LENGTH_SHORT)
-                            .show();
-                }
-            }
+            checkAppointmentAccomplishment(latitude, longitude);
         }
 
         @Override
