@@ -70,7 +70,7 @@ public class Database extends SQLiteOpenHelper {
     public static final String GPS_SQL_DELETE_ENTRIES =
             "DROP TABLE IF EXISTS " + GPS_TABLE_NAME;
 
-    //GPS table
+    //SMS table
     public static final String SMS_TABLE_NAME = "sms";
     public static final String SMS_COLUMN_NAME_TIME = "time";
     public static final String[] SMS_COLUMNS = {SMS_TABLE_NAME,

@@ -31,7 +31,6 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
     /**
      * The refresh distance is set to 0 meter, which means the update does not depend on distance
      */
-
     private PreferenceChangeListener mPreferenceListener = null;
     private SharedPreferences mSharedPreferences;
     private LocationManager mLocationManager;
