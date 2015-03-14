@@ -24,6 +24,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -355,6 +356,13 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
             TextView editText_longitude = (TextView)(rootView.findViewById(R.id.textView_longitude));
             editText_longitude.setText("" + appointment.longitude, TextView.BufferType.EDITABLE);
+
+            TextView editText_time = (TextView)(rootView.findViewById(R.id.textView_time));
+            editText_time.setText("" + appointment.date + " " + appointment.time, TextView.BufferType.EDITABLE);
+
+            CheckBox checkBox_done = (CheckBox)(rootView.findViewById(R.id.checkBox_done));
+            if(appointment.done == 1)
+                checkBox_done.setChecked(true);
             /*
             ImageView imageView_pic = (ImageView)(rootView.findViewById(R.id.imageView_pic));
             byte[] imageByteArray = appointment.pic;

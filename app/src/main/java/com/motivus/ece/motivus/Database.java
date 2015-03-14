@@ -30,6 +30,7 @@ public class Database extends SQLiteOpenHelper {
     public static final String APPOINTMENT_COLUMN_NAME_TIME = "time";
     public static final String APPOINTMENT_COLUMN_NAME_LATITUDE = "latitude";
     public static final String APPOINTMENT_COLUMN_NAME_LONGITUDE = "longitude";
+    public static final String APPOINTMENT_COLUMN_NAME_DONE = "done";
     public static final String APPOINTMENT_COLUMN_NAME_PIC = "pic";
     public static final String[] APPOINTMENT_COLUMNS = {APPOINTMENT_COLUMN_NAME_TITLE,
             APPOINTMENT_COLUMN_NAME_DETAIL,
@@ -37,6 +38,7 @@ public class Database extends SQLiteOpenHelper {
             APPOINTMENT_COLUMN_NAME_TIME,
             APPOINTMENT_COLUMN_NAME_LATITUDE,
             APPOINTMENT_COLUMN_NAME_LONGITUDE,
+            APPOINTMENT_COLUMN_NAME_DONE,
             APPOINTMENT_COLUMN_NAME_PIC};
 
     public static final String APPOINTMENT_SQL_CREATE_ENTRIES =
@@ -47,6 +49,7 @@ public class Database extends SQLiteOpenHelper {
                     APPOINTMENT_COLUMN_NAME_TIME + " TEXT," +
                     APPOINTMENT_COLUMN_NAME_LATITUDE + " TEXT," +
                     APPOINTMENT_COLUMN_NAME_LONGITUDE + " TEXT," +
+                    APPOINTMENT_COLUMN_NAME_DONE + " TEXT," +
                     APPOINTMENT_COLUMN_NAME_PIC + " BLOB" +
                     " )";
     public static final String APPOINTMENT_SQL_DELETE_ENTRIES =
@@ -125,6 +128,7 @@ public class Database extends SQLiteOpenHelper {
         values.put(APPOINTMENT_COLUMN_NAME_TIME, appointment.time);
         values.put(APPOINTMENT_COLUMN_NAME_LATITUDE, "" + appointment.latitude);
         values.put(APPOINTMENT_COLUMN_NAME_LONGITUDE, "" + appointment.longitude);
+        values.put(APPOINTMENT_COLUMN_NAME_DONE, "" + appointment.done);
         values.put(APPOINTMENT_COLUMN_NAME_PIC, appointment.pic);
 
         long newRowId = -1;
@@ -143,10 +147,10 @@ public class Database extends SQLiteOpenHelper {
 
     public boolean existAppointment(String name) {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db. query(APPOINTMENT_TABLE_NAME,
-                APPOINTMENT_COLUMNS,
-                APPOINTMENT_COLUMN_NAME_TITLE + " = '"+ name + "'",
-                null, null, null, null);
+        Cursor cursor = db.query(APPOINTMENT_TABLE_NAME,
+                null,
+                APPOINTMENT_COLUMN_NAME_TITLE + " = ?",
+                new String[] { name }, null, null, null);
         boolean exists = (cursor.getCount() > 0);
         cursor.close();
         return exists;
@@ -165,6 +169,7 @@ public class Database extends SQLiteOpenHelper {
         values.put(APPOINTMENT_COLUMN_NAME_TIME, appointment.time);
         values.put(APPOINTMENT_COLUMN_NAME_LATITUDE, appointment.latitude);
         values.put(APPOINTMENT_COLUMN_NAME_LONGITUDE, appointment.longitude);
+        values.put(APPOINTMENT_COLUMN_NAME_DONE, "" + appointment.done);
         values.put(APPOINTMENT_COLUMN_NAME_PIC, appointment.pic);
 
         //Updating row
@@ -178,9 +183,9 @@ public class Database extends SQLiteOpenHelper {
             Appointment appointment = new Appointment();
 
             Cursor cursor = db.query(APPOINTMENT_TABLE_NAME,
-                    APPOINTMENT_COLUMNS,
-                    APPOINTMENT_COLUMN_NAME_TITLE + " = '" + name + "'",
-                    null, null, null, null);
+                    null,
+                    APPOINTMENT_COLUMN_NAME_TITLE + " = ?",
+                    new String[] { name }, null, null, null);
             if (cursor != null) {
                 cursor.moveToFirst();
                 appointment.title = cursor.getString(0);
@@ -189,7 +194,8 @@ public class Database extends SQLiteOpenHelper {
                 appointment.time = cursor.getString(3);
                 appointment.latitude = Double.parseDouble(cursor.getString(4));
                 appointment.longitude = Double.parseDouble(cursor.getString(5));
-                appointment.pic = cursor.getBlob(6);
+                appointment.done = cursor.getInt(6);
+                appointment.pic = cursor.getBlob(7);
 
                 cursor.close();
                 return appointment;
@@ -220,7 +226,8 @@ public class Database extends SQLiteOpenHelper {
                 appointment.time = cursor.getString(3);
                 appointment.latitude = Double.parseDouble(cursor.getString(4));
                 appointment.longitude = Double.parseDouble(cursor.getString(5));
-                appointment.pic = cursor.getBlob(6);
+                appointment.done = cursor.getInt(6);
+                appointment.pic = cursor.getBlob(7);
 
                 appointments.add(appointment);
             } while (cursor.moveToNext());

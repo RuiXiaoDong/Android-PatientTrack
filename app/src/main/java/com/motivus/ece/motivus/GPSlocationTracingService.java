@@ -107,15 +107,15 @@ public class GPSlocationTracingService extends Service {
             Date currentDate = calendar.getTime();
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
             String appointmentDate = "" + appointments.get(i).date + ' ' + appointments.get(i).time;
-            Date compateDate;
+            Date compareDate;
 
             try {
-                compateDate = formatter.parse(appointmentDate);
+                compareDate = formatter.parse(appointmentDate);
             } catch (ParseException e) {
                 e.printStackTrace();
                 continue;
             }
-            long diff = currentDate.getTime() - compateDate.getTime();
+            long diff = currentDate.getTime() - compareDate.getTime();
             int diffDays = (int) (diff / (24 * 60 * 60 * 1000));
             int diffhours = (int) (diff / (60 * 60 * 1000));
             int diffmin = (int) (diff / (60 * 1000));
@@ -125,7 +125,9 @@ public class GPSlocationTracingService extends Service {
                 double diffDistance = HelperFunctions.checkDistance(latitude, longitude, appointments.get(i).latitude, appointments.get(i).longitude);
                 //Check the location
                 if (diffDistance <= LOCATION_THRESHOLD_DISTANCE) {
-                    appointments.get(i).check = true;
+                    appointments.get(i).done = 1;
+                    //if(Database.getInstance(getApplication()).existAppointment(appointments.get(i).title))
+                    //    Database.getInstance(getApplication()).updateAppointment(appointments.get(i));
                     Toast.makeText(getApplication(),
                             "\"" + appointments.get(i).title + "\" appointment DONE!", Toast.LENGTH_SHORT)
                             .show();
