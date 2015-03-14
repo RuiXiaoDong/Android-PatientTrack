@@ -283,7 +283,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             Appointment appointment = (Appointment)l.getItemAtPosition(position);
             DetailFragment detailFragment = new DetailFragment();
             Bundle bundle = new Bundle();
-            bundle.putParcelable("appointment", appointment);
+            bundle.putString("appointmentTitle", appointment.title);
             detailFragment.setArguments(bundle);
             FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
             fragmentTransaction.replace(R.id.container, detailFragment);
@@ -334,7 +334,6 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
     }
 
     public static class DetailFragment extends Fragment {
-        public Appointment appointment;
         public DetailFragment() {
         }
 
@@ -343,7 +342,9 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
             Bundle args = getArguments();
-            appointment  = args.getParcelable("appointment");
+            String appointmentTitle = args.getString("appointmentTitle");
+
+            final Appointment appointment = Database.getInstance(getActivity()).getAppointment(appointmentTitle);
 
             TextView editText_name = (TextView)(rootView.findViewById(R.id.textView_title));
             editText_name.setText(appointment.title, TextView.BufferType.EDITABLE);
@@ -386,7 +387,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                         @Override
                         public void onClick(View v) {
                             getActivity().getSupportFragmentManager().popBackStack();
-                            Database.getInstance(getActivity()).deleteAppointment(appointment);
+                            Database.getInstance(getActivity()).deleteAppointment(appointment.title);
                         }
                     }
             );

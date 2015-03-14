@@ -32,14 +32,6 @@ public class Database extends SQLiteOpenHelper {
     public static final String APPOINTMENT_COLUMN_NAME_LONGITUDE = "longitude";
     public static final String APPOINTMENT_COLUMN_NAME_DONE = "done";
     public static final String APPOINTMENT_COLUMN_NAME_PIC = "pic";
-    public static final String[] APPOINTMENT_COLUMNS = {APPOINTMENT_COLUMN_NAME_TITLE,
-            APPOINTMENT_COLUMN_NAME_DETAIL,
-            APPOINTMENT_COLUMN_NAME_DATE,
-            APPOINTMENT_COLUMN_NAME_TIME,
-            APPOINTMENT_COLUMN_NAME_LATITUDE,
-            APPOINTMENT_COLUMN_NAME_LONGITUDE,
-            APPOINTMENT_COLUMN_NAME_DONE,
-            APPOINTMENT_COLUMN_NAME_PIC};
 
     public static final String APPOINTMENT_SQL_CREATE_ENTRIES =
             "CREATE TABLE " + APPOINTMENT_TABLE_NAME + " (" +
@@ -49,7 +41,7 @@ public class Database extends SQLiteOpenHelper {
                     APPOINTMENT_COLUMN_NAME_TIME + " TEXT," +
                     APPOINTMENT_COLUMN_NAME_LATITUDE + " TEXT," +
                     APPOINTMENT_COLUMN_NAME_LONGITUDE + " TEXT," +
-                    APPOINTMENT_COLUMN_NAME_DONE + " TEXT," +
+                    APPOINTMENT_COLUMN_NAME_DONE + " INTEGER," +
                     APPOINTMENT_COLUMN_NAME_PIC + " BLOB" +
                     " )";
     public static final String APPOINTMENT_SQL_DELETE_ENTRIES =
@@ -128,7 +120,7 @@ public class Database extends SQLiteOpenHelper {
         values.put(APPOINTMENT_COLUMN_NAME_TIME, appointment.time);
         values.put(APPOINTMENT_COLUMN_NAME_LATITUDE, "" + appointment.latitude);
         values.put(APPOINTMENT_COLUMN_NAME_LONGITUDE, "" + appointment.longitude);
-        values.put(APPOINTMENT_COLUMN_NAME_DONE, "" + appointment.done);
+        values.put(APPOINTMENT_COLUMN_NAME_DONE, appointment.done);
         values.put(APPOINTMENT_COLUMN_NAME_PIC, appointment.pic);
 
         long newRowId = -1;
@@ -169,7 +161,7 @@ public class Database extends SQLiteOpenHelper {
         values.put(APPOINTMENT_COLUMN_NAME_TIME, appointment.time);
         values.put(APPOINTMENT_COLUMN_NAME_LATITUDE, appointment.latitude);
         values.put(APPOINTMENT_COLUMN_NAME_LONGITUDE, appointment.longitude);
-        values.put(APPOINTMENT_COLUMN_NAME_DONE, "" + appointment.done);
+        values.put(APPOINTMENT_COLUMN_NAME_DONE, appointment.done);
         values.put(APPOINTMENT_COLUMN_NAME_PIC, appointment.pic);
 
         //Updating row
@@ -207,7 +199,6 @@ public class Database extends SQLiteOpenHelper {
 
     public ArrayList<Appointment> getAllAppointments() {
         ArrayList<Appointment> appointments = new ArrayList<Appointment>();
-
         //build the query
         String query = "SELECT * FROM " + APPOINTMENT_TABLE_NAME;
 
@@ -237,12 +228,12 @@ public class Database extends SQLiteOpenHelper {
         return appointments;
     }
 
-    public void deleteAppointment(Appointment appointment) {
+    public void deleteAppointment(String appointmentTitle) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         db.delete(APPOINTMENT_TABLE_NAME, //table name
                 APPOINTMENT_COLUMN_NAME_TITLE + " = ?",  // selections
-                new String[] { appointment.title }); //selections args
+                new String[] { appointmentTitle }); //selections args
     }
 
     public long addGPS(GPSlocation gpsLocation){
