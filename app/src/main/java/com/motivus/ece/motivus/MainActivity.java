@@ -318,12 +318,26 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_report, container, false);
-            Button trackButton = (Button) rootView.findViewById(R.id.button_tracking);
-            trackButton.setOnClickListener(
+
+            //Map Tracking
+            Button mapTrackButton = (Button) rootView.findViewById(R.id.button_tracking_map);
+            mapTrackButton.setOnClickListener(
                     new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             Intent map = new Intent(v.getContext(), TrackingMap.class);
+                            startActivity(map);
+                        }
+                    }
+            );
+
+            //Appointment Tracking
+            Button appointmentTrackButton = (Button) rootView.findViewById(R.id.button_tracking_appointment);
+            appointmentTrackButton.setOnClickListener(
+                    new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent map = new Intent(v.getContext(), BarChartActivity.class);
                             startActivity(map);
                         }
                     }
