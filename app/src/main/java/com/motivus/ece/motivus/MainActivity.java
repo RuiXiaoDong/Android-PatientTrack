@@ -8,6 +8,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.LocationManager;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ListFragment;
 import android.support.v7.app.ActionBarActivity;
@@ -16,7 +17,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -24,9 +24,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.CheckBox;
 import android.widget.ListView;
-import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends ActionBarActivity implements ActionBar.TabListener {
     /**
@@ -376,23 +377,31 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
             Bundle args = getArguments();
             int appointmentID = args.getInt("appointmentID");
-
             final Appointment appointment = Database.getInstance(getActivity()).getAppointment(appointmentID);
+           
+            final EditText editText_name = (EditText)(rootView.findViewById(R.id.textView_title));
+            editText_name.setEnabled(false);
+            editText_name.setText(appointment.title, EditText.BufferType.EDITABLE);
 
-            TextView editText_name = (TextView)(rootView.findViewById(R.id.textView_title));
-            editText_name.setText(appointment.title, TextView.BufferType.EDITABLE);
+            final EditText editText_detail = (EditText)(rootView.findViewById(R.id.textView_detail));
+            editText_detail.setEnabled(false);
+            editText_detail.setText(appointment.detail, EditText.BufferType.EDITABLE);
 
-            TextView editText_detail = (TextView)(rootView.findViewById(R.id.textView_detail));
-            editText_detail.setText(appointment.detail, TextView.BufferType.EDITABLE);
+            final EditText editText_latitude = (EditText)(rootView.findViewById(R.id.textView_latitude));
+            editText_latitude.setEnabled(false);
+            editText_latitude.setText("" + appointment.latitude, EditText.BufferType.EDITABLE);
 
-            TextView editText_latitude = (TextView)(rootView.findViewById(R.id.textView_latitude));
-            editText_latitude.setText("" + appointment.latitude, TextView.BufferType.EDITABLE);
+            final EditText editText_longitude = (EditText)(rootView.findViewById(R.id.textView_longitude));
+            editText_longitude.setEnabled(false);
+            editText_longitude.setText("" + appointment.longitude, EditText.BufferType.EDITABLE);
 
-            TextView editText_longitude = (TextView)(rootView.findViewById(R.id.textView_longitude));
-            editText_longitude.setText("" + appointment.longitude, TextView.BufferType.EDITABLE);
+            final EditText editText_time = (EditText)(rootView.findViewById(R.id.textView_time));
+            editText_time.setEnabled(false);
+            editText_time.setText("" + appointment.time, EditText.BufferType.EDITABLE);
 
-            TextView editText_time = (TextView)(rootView.findViewById(R.id.textView_time));
-            editText_time.setText("" + appointment.date + " " + appointment.time, TextView.BufferType.EDITABLE);
+            final EditText editText_date = (EditText)(rootView.findViewById(R.id.textView_date));
+            editText_date.setText("" + appointment.date, EditText.BufferType.EDITABLE);
+            editText_date.setEnabled(false);
 
             CheckBox checkBox_done = (CheckBox)(rootView.findViewById(R.id.checkBox_done));
             if(appointment.done == 1)
@@ -414,7 +423,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             });
             */
             //Add new appointment button
-            Button deleteAppointment = (Button) rootView.findViewById(R.id.button_delete);
+            final Button deleteAppointment = (Button) rootView.findViewById(R.id.button_delete);
             deleteAppointment.setOnClickListener(
                     new View.OnClickListener() {
                         @Override
@@ -422,9 +431,62 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                             getActivity().getSupportFragmentManager().popBackStack();
                             Database.getInstance(getActivity()).deleteAppointment(appointment.id);
                         }
+                        }
+
+            );
+            final Button editAppointment = (Button) rootView.findViewById(R.id.button_edit);
+            editAppointment.setOnClickListener(
+                    new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+                            editAppointment.setVisibility(EditText.INVISIBLE);
+                            deleteAppointment.setVisibility(EditText.INVISIBLE);
+                            editText_name.setEnabled(false);
+
+
+
+                            editText_detail.setEnabled(true);
+
+
+                            //editText_latitude.setEnabled(true);
+                            //appointment.latitude = editText_latitude.getText().toString();
+
+                      //      editText_longitude.setEnabled(true);
+                        //    appointment.longitude = editText_longitude.getText().toString();
+
+                            editText_time.setEnabled(true);
+
+
+                            editText_date.setEnabled(true);
+
+                           // appointment.latitude = editText_latitude.getT;
+                           // appointment.longitude = editText_longitude.getText();
+
+                        }
                     }
             );
+                            Button updatetAppointment = (Button) rootView.findViewById(R.id.button_done);
+                                updatetAppointment.setOnClickListener(
+                                    new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
 
+                                            appointment.title = editText_name.getText().toString();
+                                            appointment.detail = editText_detail.getText().toString();
+                                            appointment.time = editText_time.getText().toString();
+                                            appointment.date = editText_date.getText().toString();
+                                            Database.getInstance(getActivity()).updateAppointment(appointment);
+                                            Toast.makeText(getActivity(), "Saved!", Toast.LENGTH_SHORT).show();
+                                            getActivity().getSupportFragmentManager().popBackStack();
+
+                      //      Intent intent = new Intent(getActivity(), EditAppointment.class);
+                        //    startActivity(intent);
+                            //  getActivity().getSupportFragmentManager().popBackStack();
+                          //  Database.getInstance(getActivity()).updateAppointment(appointment);
+                        }
+                    }
+            );
             return rootView;
         }
     }
