@@ -1,10 +1,16 @@
 package com.motivus.ece.motivus;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
 import android.app.Activity;
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.LocationManager;
@@ -24,9 +30,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.CheckBox;
 import android.widget.ListView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 public class MainActivity extends ActionBarActivity implements ActionBar.TabListener {
@@ -379,27 +387,27 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             int appointmentID = args.getInt("appointmentID");
             final Appointment appointment = Database.getInstance(getActivity()).getAppointment(appointmentID);
            
-            final EditText editText_name = (EditText)(rootView.findViewById(R.id.textView_title));
-            editText_name.setEnabled(false);
-            editText_name.setText(appointment.title, EditText.BufferType.EDITABLE);
+            final EditText editText_title = (EditText)(rootView.findViewById(R.id.editView_title));
+            editText_title.setEnabled(false);
+            editText_title.setText(appointment.title, EditText.BufferType.EDITABLE);
 
-            final EditText editText_detail = (EditText)(rootView.findViewById(R.id.textView_detail));
+            final EditText editText_detail = (EditText)(rootView.findViewById(R.id.editView_detail));
             editText_detail.setEnabled(false);
             editText_detail.setText(appointment.detail, EditText.BufferType.EDITABLE);
 
-            final EditText editText_latitude = (EditText)(rootView.findViewById(R.id.textView_latitude));
+            final EditText editText_latitude = (EditText)(rootView.findViewById(R.id.editView_latitude));
             editText_latitude.setEnabled(false);
             editText_latitude.setText("" + appointment.latitude, EditText.BufferType.EDITABLE);
 
-            final EditText editText_longitude = (EditText)(rootView.findViewById(R.id.textView_longitude));
+            final EditText editText_longitude = (EditText)(rootView.findViewById(R.id.editView_longitude));
             editText_longitude.setEnabled(false);
             editText_longitude.setText("" + appointment.longitude, EditText.BufferType.EDITABLE);
 
-            final EditText editText_time = (EditText)(rootView.findViewById(R.id.textView_time));
+            final EditText editText_time = (EditText)(rootView.findViewById(R.id.editView_time));
             editText_time.setEnabled(false);
             editText_time.setText("" + appointment.time, EditText.BufferType.EDITABLE);
 
-            final EditText editText_date = (EditText)(rootView.findViewById(R.id.textView_date));
+            final EditText editText_date = (EditText)(rootView.findViewById(R.id.editView_date));
             editText_date.setText("" + appointment.date, EditText.BufferType.EDITABLE);
             editText_date.setEnabled(false);
 
@@ -422,7 +430,65 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                 }
             });
             */
-            //Add new appointment button
+            editText_time.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+                    String appointmentDate = "" + editText_date.getText().toString() + ' ' + editText_time.getText().toString();
+
+                    Calendar calendar = Calendar.getInstance();
+                    try {
+                        calendar.setTime(formatter.parse(appointmentDate));
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    int hour = calendar.get(Calendar.HOUR_OF_DAY);
+                    int minute = calendar.get(Calendar.MINUTE);
+
+                    //Pick time within the day
+                    TimePickerDialog mTimePicker;
+                    mTimePicker = new TimePickerDialog(getActivity(), new TimePickerDialog.OnTimeSetListener() {
+                        @Override
+                        public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
+                            String hours = (selectedHour < 10 ) ? "0" + selectedHour : "" + selectedHour;
+                            String mins = (selectedMinute < 10) ? "0" + selectedMinute : "" + selectedMinute;
+                            editText_time.setText(hours + ":" + mins);
+                        }
+                    }, hour, minute, true);//Yes 24 hour time
+                    mTimePicker.show();
+
+                }
+            });
+            editText_date.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+                    String appointmentDate = "" + editText_date.getText().toString() + ' ' + editText_time.getText().toString();
+
+                    Calendar calendar = Calendar.getInstance();
+                    try {
+                        calendar.setTime(formatter.parse(appointmentDate));
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    int year = calendar.get(Calendar.YEAR);
+                    int month = calendar.get(Calendar.MONTH);
+                    int day = calendar.get(Calendar.DAY_OF_MONTH);
+
+                    //Pick the date, month, year
+                    DatePickerDialog mDatePicker;
+                    mDatePicker = new DatePickerDialog(getActivity(), new DatePickerDialog.OnDateSetListener() {
+                        @Override
+                        public void onDateSet(DatePicker timePicker, int year, int monthOfYear, int dayOfMonth) {
+                            monthOfYear = monthOfYear + 1;
+                            String months = (monthOfYear < 10 ) ? "0" + monthOfYear : "" + monthOfYear;
+                            String days = (dayOfMonth < 10) ? "0" + dayOfMonth : "" + dayOfMonth;
+                            editText_date.setText(year + "-" + months + "-" + days);
+                        }
+                    }, year, month, day);//Yes 24 hour time
+                    mDatePicker.show();
+                }
+            });
             final Button deleteAppointment = (Button) rootView.findViewById(R.id.button_delete);
             deleteAppointment.setOnClickListener(
                     new View.OnClickListener() {
@@ -438,10 +504,9 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                     new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-
                             editAppointment.setVisibility(EditText.INVISIBLE);
                             deleteAppointment.setVisibility(EditText.INVISIBLE);
-                            editText_name.setEnabled(false);
+                            editText_title.setEnabled(true);
                             editText_detail.setEnabled(true);
                             //editText_latitude.setEnabled(true);
                             //appointment.latitude = editText_latitude.getText().toString();
@@ -454,12 +519,12 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                         }
                     }
             );
-            Button updatetAppointment = (Button) rootView.findViewById(R.id.button_done);
-            updatetAppointment.setOnClickListener(
+            final Button updateAppointment = (Button) rootView.findViewById(R.id.button_done);
+            updateAppointment.setOnClickListener(
                     new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            appointment.title = editText_name.getText().toString();
+                            appointment.title = editText_title.getText().toString();
                             appointment.detail = editText_detail.getText().toString();
                             appointment.time = editText_time.getText().toString();
                             appointment.date = editText_date.getText().toString();

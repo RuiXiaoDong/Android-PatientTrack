@@ -48,12 +48,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="Title"
-                android:id="@+id/textView_title"
+                android:text="title"
+                android:id="@+id/editView_title"
                 android:layout_below="@+id/textView_title_label"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
-                android:layout_marginBottom="10dp" />
+                android:layout_marginBottom="10dp"
+                android:layout_alignRight="@+id/checkBox_done"
+                android:layout_alignEnd="@+id/checkBox_done" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -62,7 +64,7 @@
                 android:text="Detail:"
                 android:id="@+id/textView_detail_label"
                 android:scrollbars = "vertical"
-                android:layout_below="@+id/textView_title"
+                android:layout_below="@+id/editView_title"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:layout_marginBottom="5dp" />
@@ -71,13 +73,15 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="Detail"
-                android:id="@+id/textView_detail"
+                android:text="detail"
+                android:id="@+id/editView_detail"
                 android:scrollbars = "vertical"
                 android:layout_below="@+id/textView_detail_label"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
-                android:layout_marginBottom="10dp" />
+                android:layout_marginBottom="10dp"
+                android:layout_alignRight="@+id/editView_title"
+                android:layout_alignEnd="@+id/editView_title" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -85,7 +89,7 @@
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="Latitude:"
                 android:id="@+id/textView_latitude_label"
-                android:layout_below="@+id/textView_detail"
+                android:layout_below="@+id/editView_detail"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:layout_marginBottom="5dp" />
@@ -95,11 +99,13 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="latitude"
-                android:id="@+id/textView_latitude"
+                android:id="@+id/editView_latitude"
                 android:layout_below="@+id/textView_latitude_label"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
-                android:layout_marginBottom="10dp" />
+                android:layout_marginBottom="10dp"
+                android:layout_alignRight="@+id/editView_detail"
+                android:layout_alignEnd="@+id/editView_detail" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -107,7 +113,7 @@
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="Longitude:"
                 android:id="@+id/textView_longitude_label"
-                android:layout_below="@+id/textView_latitude"
+                android:layout_below="@+id/editView_latitude"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:layout_marginBottom="5dp" />
@@ -117,11 +123,13 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="longitude"
-                android:id="@+id/textView_longitude"
+                android:id="@+id/editView_longitude"
                 android:layout_below="@+id/textView_longitude_label"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
-                android:layout_marginBottom="10dp"/>
+                android:layout_marginBottom="10dp"
+                android:layout_alignRight="@+id/editView_latitude"
+                android:layout_alignEnd="@+id/editView_latitude" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -129,7 +137,7 @@
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="Time:"
                 android:id="@+id/textView_time_label"
-                android:layout_below="@+id/textView_longitude"
+                android:layout_below="@+id/editView_longitude"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:layout_marginBottom="5dp" />
@@ -139,11 +147,13 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="time"
-                android:id="@+id/textView_time"
+                android:id="@+id/editView_time"
                 android:layout_below="@+id/textView_time_label"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
-                android:layout_marginBottom="20dp" />
+                android:layout_marginBottom="20dp"
+                android:layout_alignRight="@+id/editView_longitude"
+                android:layout_alignEnd="@+id/editView_longitude" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -151,7 +161,7 @@
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="Date:"
                 android:id="@+id/textView_date_label"
-                android:layout_below="@+id/textView_time"
+                android:layout_below="@+id/editView_time"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:layout_marginBottom="5dp" />
@@ -161,11 +171,13 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="date"
-                android:id="@+id/textView_date"
+                android:id="@+id/editView_date"
                 android:layout_below="@+id/textView_date_label"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
-                android:layout_marginBottom="30dp" />
+                android:layout_marginBottom="30dp"
+                android:layout_alignRight="@+id/editView_time"
+                android:layout_alignEnd="@+id/editView_time" />
 
             <CheckBox
                 android:layout_width="wrap_content"

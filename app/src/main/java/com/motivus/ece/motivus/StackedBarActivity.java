@@ -37,6 +37,8 @@ public class StackedBarActivity extends FragmentActivity {
         mChart.setDrawGridBackground(false);
         mChart.setDrawValuesForWholeStack(true);
 
+        setData(5);
+
         XAxis xLabels = mChart.getXAxis();
         xLabels.setPosition(XAxis.XAxisPosition.TOP);
 
@@ -45,13 +47,11 @@ public class StackedBarActivity extends FragmentActivity {
         leftAxis.setStartAtZero(true);
         leftAxis.setDrawAxisLine(true);
         leftAxis.setDrawTopYLabelEntry(true);
+        leftAxis.setAxisMaxValue(mMaxNumAppointment + 1);
+        leftAxis.setLabelCount((int)mMaxNumAppointment + 1);
 
         YAxis rightAxis = mChart.getAxisRight();
         rightAxis.setEnabled(false);
-
-        setData(5);
-
-        leftAxis.setAxisMaxValue(mMaxNumAppointment + 1);
 
         Legend l = mChart.getLegend();
         l.setPosition(Legend.LegendPosition.BELOW_CHART_RIGHT);
