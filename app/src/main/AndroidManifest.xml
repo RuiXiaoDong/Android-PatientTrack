@@ -69,6 +69,10 @@
             android:name=".BarChartActivity"
             android:label="@string/title_activity_bar_chart" >
         </activity>
+        <activity
+            android:name=".StackedBarActivity"
+            android:label="@string/title_activity_stacked_bar" >
+        </activity>
     </application>
 
 </manifest>

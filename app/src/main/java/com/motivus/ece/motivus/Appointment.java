@@ -3,10 +3,15 @@ package com.motivus.ece.motivus;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+class AppointmentStatistic{
+    public float rate;
+    public int accomplishedAppointment;
+    public int totalAppointment;
+}
 /**
  * Created by dongx on 2015-02-18.
  */
-public final class Appointment implements Parcelable {
+public class Appointment implements Parcelable {
     public int id;
     public String title;
     public String detail;

@@ -264,15 +264,15 @@ public class Database extends SQLiteOpenHelper {
                 new String[] { "" + id }); //selections args
     }
 
-    public float[] getAppointmentAccomplishmentRate_Weekly(int numOfWeeks) {
+    public AppointmentStatistic[] getAppointmentAccomplishmentRate_Weekly(int numOfWeeks) {
         //Initialize all the accomplishment rate
-        float[] rates = new float[numOfWeeks];
-        int[] numOfDoneAppointment = new int[numOfWeeks];
-        int[] numOfAllAppointment = new int[numOfWeeks];
+        AppointmentStatistic[] appointmentStatistics = new AppointmentStatistic[numOfWeeks];
         for(int i = 0; i <  numOfWeeks; i++) {
-            rates[i] = 0.0f;
-            numOfDoneAppointment[i] = 0;
-            numOfAllAppointment[i] = 0;
+            AppointmentStatistic appointmentStatistic = new AppointmentStatistic();
+            appointmentStatistic.rate = 0.0f;
+            appointmentStatistic.accomplishedAppointment = 0;
+            appointmentStatistic.totalAppointment = 0;
+            appointmentStatistics[i] = appointmentStatistic;
         }
         //Get all the appointments
         ArrayList<Appointment> appointments = getAllAppointments();
@@ -299,20 +299,20 @@ public class Database extends SQLiteOpenHelper {
 
             for(int j = 0; j <  numOfWeeks; j++) {
                 if(diffDays >= j*7 && diffDays < (j+1)*7) {
-                    numOfAllAppointment[j]++;
+                    appointmentStatistics[j].totalAppointment++;
                     if (appointments.get(i).done == 1) {
-                        numOfDoneAppointment[j]++;
+                        appointmentStatistics[j].accomplishedAppointment++;
                     }
                 }
             }
         }
         for(int i = 0; i <  numOfWeeks; i++) {
-            if(numOfAllAppointment[i] != 0) {
-                rates[i] = (float) numOfDoneAppointment[i] / numOfAllAppointment[i];
+            if(appointmentStatistics[i].totalAppointment != 0) {
+                appointmentStatistics[i].rate = (float) appointmentStatistics[i].accomplishedAppointment / appointmentStatistics[i].totalAppointment;
             }
         }
 
-        return rates;
+        return appointmentStatistics;
     }
 
     public long addGPS(GPSlocation gpsLocation){

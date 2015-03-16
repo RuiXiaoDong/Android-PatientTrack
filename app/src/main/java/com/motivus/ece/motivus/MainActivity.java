@@ -339,12 +339,24 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             );
 
             //Appointment Tracking
+            Button accomplishmentTrackButton = (Button) rootView.findViewById(R.id.button_tracking_accomplishment);
+            accomplishmentTrackButton.setOnClickListener(
+                    new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent map = new Intent(v.getContext(), BarChartActivity.class);
+                            startActivity(map);
+                        }
+                    }
+            );
+
+            //Appointment Tracking
             Button appointmentTrackButton = (Button) rootView.findViewById(R.id.button_tracking_appointment);
             appointmentTrackButton.setOnClickListener(
                     new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            Intent map = new Intent(v.getContext(), BarChartActivity.class);
+                            Intent map = new Intent(v.getContext(), StackedBarActivity.class);
                             startActivity(map);
                         }
                     }
