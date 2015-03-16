@@ -21,6 +21,8 @@ import android.widget.Toast;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.UiSettings;
@@ -43,7 +45,7 @@ public class GoogleMaps extends FragmentActivity implements OnMapReadyCallback,
     private Marker selectedLocation;
     private LocationManager mLocationManager;
     private static final long MIN_TIME = 400;
-    private static final float MIN_DISTANCE = 1000;
+    private static final float MIN_DISTANCE = 0;
     private LatLng latLng;
     private MarkerOptions markerOptions;
 
@@ -109,6 +111,7 @@ public class GoogleMaps extends FragmentActivity implements OnMapReadyCallback,
             uiSettings = mGoogleMap.getUiSettings();
             uiSettings.setAllGesturesEnabled(true);
 
+            mLocationManager.removeUpdates(this);
             mLocationManager.requestLocationUpdates(
                     LocationManager.NETWORK_PROVIDER, MIN_TIME,
                     MIN_DISTANCE, this);
@@ -117,6 +120,12 @@ public class GoogleMaps extends FragmentActivity implements OnMapReadyCallback,
                 Toast.makeText(getApplication(),
                         "Unable to create the map", Toast.LENGTH_SHORT)
                         .show();
+            }
+            else {
+                CameraPosition cameraPosition = new CameraPosition.Builder().target(
+                        //new LatLng(51.04662838180407,-114.071044921875)).zoom(10).build();
+                        new LatLng(43.653226, -79.3831842)).zoom(10).build();
+                mGoogleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
             }
         }
     }
@@ -134,8 +143,13 @@ public class GoogleMaps extends FragmentActivity implements OnMapReadyCallback,
         initializeMap();
     }
 
-    private class GeocoderTask extends AsyncTask<String, Void, List<Address>> {
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mLocationManager.removeUpdates(this);
+    }
 
+    private class GeocoderTask extends AsyncTask<String, Void, List<Address>> {
         @Override
         protected List<Address> doInBackground(String... locationName) {
             // Creating an instance of Geocoder class
@@ -189,15 +203,10 @@ public class GoogleMaps extends FragmentActivity implements OnMapReadyCallback,
 
     @Override
     public void onMapReady(GoogleMap map) {
-        LatLng sydney = new LatLng(-33.867, 151.206);
+        LatLng toronto = new LatLng(43.653226,-79.3831843);
 
         map.setMyLocationEnabled(true);
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 13));
-
-        map.addMarker(new MarkerOptions()
-                .title("Sydney")
-                .snippet("The most populous city in Australia.")
-                .position(sydney));
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(toronto, 10));
     }
 
     @Override
@@ -230,7 +239,6 @@ public class GoogleMaps extends FragmentActivity implements OnMapReadyCallback,
         CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng,
                 10);
         mGoogleMap.animateCamera(cameraUpdate);
-        mLocationManager.removeUpdates(this);
         mGoogleMap.getMaxZoomLevel();
     }
 
