@@ -13,7 +13,7 @@ public final class Appointment implements Parcelable {
     public String time;
     public double latitude;
     public double longitude;
-    public boolean check = false;
+    public int done = 0;
     public byte[] pic;
 
     public Appointment() {
