@@ -24,29 +24,21 @@ public class Database extends SQLiteOpenHelper {
     public static final String APPOINTMENT_COLUMN_NAME_TITLE = "title";
     public static final String APPOINTMENT_COLUMN_NAME_DETAIL = "detail";
     public static final String APPOINTMENT_COLUMN_NAME_DATE = "date";
-   // public static final String APPOINTMENT_COLUMN_NAME_ENDDATE = "enddate";
     public static final String APPOINTMENT_COLUMN_NAME_TIME = "time";
     public static final String APPOINTMENT_COLUMN_NAME_LATITUDE = "latitude";
     public static final String APPOINTMENT_COLUMN_NAME_LONGITUDE = "longitude";
+    public static final String APPOINTMENT_COLUMN_NAME_DONE = "done";
     public static final String APPOINTMENT_COLUMN_NAME_PIC = "pic";
-    public static final String[] APPOINTMENT_COLUMNS = {APPOINTMENT_COLUMN_NAME_TITLE,
-            APPOINTMENT_COLUMN_NAME_DETAIL,
-            APPOINTMENT_COLUMN_NAME_DATE,
-        //    APPOINTMENT_COLUMN_NAME_ENDDATE,
-            APPOINTMENT_COLUMN_NAME_TIME,
-            APPOINTMENT_COLUMN_NAME_LATITUDE,
-            APPOINTMENT_COLUMN_NAME_LONGITUDE,
-            APPOINTMENT_COLUMN_NAME_PIC};
 
     public static final String APPOINTMENT_SQL_CREATE_ENTRIES =
             "CREATE TABLE " + APPOINTMENT_TABLE_NAME + " (" +
                     APPOINTMENT_COLUMN_NAME_TITLE + " TEXT PRIMARY KEY," +
                     APPOINTMENT_COLUMN_NAME_DETAIL + " TEXT," +
                     APPOINTMENT_COLUMN_NAME_DATE + " TEXT," +
-                  //  APPOINTMENT_COLUMN_NAME_ENDDATE + " TEXT," +
                     APPOINTMENT_COLUMN_NAME_TIME + " TEXT," +
                     APPOINTMENT_COLUMN_NAME_LATITUDE + " TEXT," +
                     APPOINTMENT_COLUMN_NAME_LONGITUDE + " TEXT," +
+                    APPOINTMENT_COLUMN_NAME_DONE + " INTEGER," +
                     APPOINTMENT_COLUMN_NAME_PIC + " BLOB" +
                     " )";
     public static final String APPOINTMENT_SQL_DELETE_ENTRIES =
@@ -122,10 +114,10 @@ public class Database extends SQLiteOpenHelper {
         values.put(APPOINTMENT_COLUMN_NAME_TITLE, appointment.title);
         values.put(APPOINTMENT_COLUMN_NAME_DETAIL, appointment.detail);
         values.put(APPOINTMENT_COLUMN_NAME_DATE, appointment.date);
-   //     values.put(APPOINTMENT_COLUMN_NAME_ENDDATE, appointment.enddate);
         values.put(APPOINTMENT_COLUMN_NAME_TIME, appointment.time);
         values.put(APPOINTMENT_COLUMN_NAME_LATITUDE, "" + appointment.latitude);
         values.put(APPOINTMENT_COLUMN_NAME_LONGITUDE, "" + appointment.longitude);
+        values.put(APPOINTMENT_COLUMN_NAME_DONE, appointment.done);
         values.put(APPOINTMENT_COLUMN_NAME_PIC, appointment.pic);
 
         long newRowId = -1;
@@ -144,10 +136,10 @@ public class Database extends SQLiteOpenHelper {
 
     public boolean existAppointment(String name) {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db. query(APPOINTMENT_TABLE_NAME,
-                APPOINTMENT_COLUMNS,
-                APPOINTMENT_COLUMN_NAME_TITLE + " = '"+ name + "'",
-                null, null, null, null);
+        Cursor cursor = db.query(APPOINTMENT_TABLE_NAME,
+                null,
+                APPOINTMENT_COLUMN_NAME_TITLE + " = ?",
+                new String[] { name }, null, null, null);
         boolean exists = (cursor.getCount() > 0);
         cursor.close();
         return exists;
@@ -163,10 +155,10 @@ public class Database extends SQLiteOpenHelper {
         values.put(APPOINTMENT_COLUMN_NAME_TITLE, appointment.title);
         values.put(APPOINTMENT_COLUMN_NAME_DETAIL, appointment.detail);
         values.put(APPOINTMENT_COLUMN_NAME_DATE, appointment.date);
-     //   values.put(APPOINTMENT_COLUMN_NAME_DATE, appointment.enddate);
         values.put(APPOINTMENT_COLUMN_NAME_TIME, appointment.time);
         values.put(APPOINTMENT_COLUMN_NAME_LATITUDE, appointment.latitude);
         values.put(APPOINTMENT_COLUMN_NAME_LONGITUDE, appointment.longitude);
+        values.put(APPOINTMENT_COLUMN_NAME_DONE, appointment.done);
         values.put(APPOINTMENT_COLUMN_NAME_PIC, appointment.pic);
 
         //Updating row
@@ -174,16 +166,15 @@ public class Database extends SQLiteOpenHelper {
                 new String[] { appointment.title });
     }
 
-
     public Appointment getAppointment(String name){
         if(existAppointment(name)) {
             SQLiteDatabase db = this.getReadableDatabase();
             Appointment appointment = new Appointment();
 
             Cursor cursor = db.query(APPOINTMENT_TABLE_NAME,
-                    APPOINTMENT_COLUMNS,
-                    APPOINTMENT_COLUMN_NAME_TITLE + " = '" + name + "'",
-                    null, null, null, null);
+                    null,
+                    APPOINTMENT_COLUMN_NAME_TITLE + " = ?",
+                    new String[] { name }, null, null, null);
             if (cursor != null) {
                 cursor.moveToFirst();
                 appointment.title = cursor.getString(0);
@@ -192,8 +183,8 @@ public class Database extends SQLiteOpenHelper {
                 appointment.time = cursor.getString(3);
                 appointment.latitude = Double.parseDouble(cursor.getString(4));
                 appointment.longitude = Double.parseDouble(cursor.getString(5));
-                appointment.pic = cursor.getBlob(6);
-             //   appointment.enddate = cursor.getString(7);
+                appointment.done = cursor.getInt(6);
+                appointment.pic = cursor.getBlob(7);
 
                 cursor.close();
                 return appointment;
@@ -224,8 +215,9 @@ public class Database extends SQLiteOpenHelper {
                 appointment.time = cursor.getString(3);
                 appointment.latitude = Double.parseDouble(cursor.getString(4));
                 appointment.longitude = Double.parseDouble(cursor.getString(5));
-                appointment.pic = cursor.getBlob(6);
-               // appointment.enddate = cursor.getString(7);
+                appointment.done = cursor.getInt(6);
+                appointment.pic = cursor.getBlob(7);
+
                 appointments.add(appointment);
             } while (cursor.moveToNext());
         }
@@ -234,13 +226,12 @@ public class Database extends SQLiteOpenHelper {
         return appointments;
     }
 
-    public void deleteAppointment(Appointment appointment) {
+    public void deleteAppointment(String appointmentTitle) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         db.delete(APPOINTMENT_TABLE_NAME, //table name
                 APPOINTMENT_COLUMN_NAME_TITLE + " = ?",  // selections
-                new String[] { appointment.title }); //selections args
-               // new String[] { appointment.title }); //selections args
+                new String[] { appointmentTitle }); //selections args
     }
 
     public long addGPS(GPSlocation gpsLocation){

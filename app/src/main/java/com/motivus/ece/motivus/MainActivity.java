@@ -1,19 +1,23 @@
 package com.motivus.ece.motivus;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.ListFragment;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.app.ListFragment;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,12 +25,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.Toast;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
 
 public class MainActivity extends ActionBarActivity implements ActionBar.TabListener {
     /**
@@ -283,7 +284,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             Appointment appointment = (Appointment)l.getItemAtPosition(position);
             DetailFragment detailFragment = new DetailFragment();
             Bundle bundle = new Bundle();
-            bundle.putParcelable("appointment", appointment);
+            bundle.putString("appointmentTitle", appointment.title);
             detailFragment.setArguments(bundle);
             FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
             fragmentTransaction.replace(R.id.container, detailFragment);
@@ -318,12 +319,26 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_report, container, false);
-            Button trackButton = (Button) rootView.findViewById(R.id.button_tracking);
-            trackButton.setOnClickListener(
+
+            //Map Tracking
+            Button mapTrackButton = (Button) rootView.findViewById(R.id.button_tracking_map);
+            mapTrackButton.setOnClickListener(
                     new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             Intent map = new Intent(v.getContext(), TrackingMap.class);
+                            startActivity(map);
+                        }
+                    }
+            );
+
+            //Appointment Tracking
+            Button appointmentTrackButton = (Button) rootView.findViewById(R.id.button_tracking_appointment);
+            appointmentTrackButton.setOnClickListener(
+                    new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent map = new Intent(v.getContext(), BarChartActivity.class);
                             startActivity(map);
                         }
                     }
@@ -334,7 +349,6 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
     }
 
     public static class DetailFragment extends Fragment {
-        public Appointment appointment;
         public DetailFragment() {
         }
 
@@ -343,8 +357,8 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
             Bundle args = getArguments();
-            appointment  = args.getParcelable("appointment");
-
+            String appointmentTitle = args.getString("appointmentTitle");
+            final Appointment appointment = Database.getInstance(getActivity()).getAppointment(appointmentTitle);
             final EditText editText_name = (EditText)(rootView.findViewById(R.id.textView_title));
             editText_name.setEnabled(false);
             editText_name.setText(appointment.title, EditText.BufferType.EDITABLE);
@@ -370,10 +384,10 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             editText_date.setText("" + appointment.date, EditText.BufferType.EDITABLE);
             editText_date.setEnabled(false);
 
-
+            CheckBox checkBox_done = (CheckBox)(rootView.findViewById(R.id.checkBox_done));
+            if(appointment.done == 1)
+                checkBox_done.setChecked(true);
             /*
-
-
             ImageView imageView_pic = (ImageView)(rootView.findViewById(R.id.imageView_pic));
             byte[] imageByteArray = appointment.pic;
             ByteArrayInputStream imageStream = new ByteArrayInputStream(imageByteArray);
@@ -395,10 +409,8 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                     new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-
-                          getActivity().getSupportFragmentManager().popBackStack();
-                            Database.getInstance(getActivity()).deleteAppointment(appointment);
-
+                            getActivity().getSupportFragmentManager().popBackStack();
+                            Database.getInstance(getActivity()).deleteAppointment(appointment.title);
                         }
                         }
 
