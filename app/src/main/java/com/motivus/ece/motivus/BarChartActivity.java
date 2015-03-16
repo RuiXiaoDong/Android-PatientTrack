@@ -96,7 +96,7 @@ public class BarChartActivity extends FragmentActivity {
             yVals.add(new BarEntry(val, i));
         }
 
-        BarDataSet set = new BarDataSet(yVals, "DataSet");
+        BarDataSet set = new BarDataSet(yVals, "Accomplishment Rate");
         set.setBarSpacePercent(35f);
 
         ArrayList<BarDataSet> dataSets = new ArrayList<BarDataSet>();

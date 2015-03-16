@@ -62,10 +62,6 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
         //Set up the database
         mDatabase = Database.getInstance(this);
-        Appointment[] demoAppointments = HelperFunctions.demoAppointments();
-        for(int i = 0; i < demoAppointments.length; i++) {
-            mDatabase.addAppointment(demoAppointments[i]);
-        }
 
         //Set up the action bar.
         final ActionBar actionBar = getSupportActionBar();
@@ -97,6 +93,13 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                     actionBar.newTab()
                             .setText(mSectionsPagerAdapter.getPageTitle(i))
                             .setTabListener(this));
+        }
+
+        //Demo data
+        Appointment[] demoAppointments = HelperFunctions.demoAppointments();
+        for(int i = 0; i < demoAppointments.length; i++) {
+            mDatabase.addAppointment(demoAppointments[i]);
+            mDatabase.setMaxAppointmentID(demoAppointments[i].id);
         }
     }
 
@@ -287,7 +290,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             Appointment appointment = (Appointment)l.getItemAtPosition(position);
             DetailFragment detailFragment = new DetailFragment();
             Bundle bundle = new Bundle();
-            bundle.putString("appointmentTitle", appointment.title);
+            bundle.putInt("appointmentID", appointment.id);
             detailFragment.setArguments(bundle);
             FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
             fragmentTransaction.replace(R.id.container, detailFragment);
@@ -360,9 +363,9 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
             Bundle args = getArguments();
-            String appointmentTitle = args.getString("appointmentTitle");
+            int appointmentID = args.getInt("appointmentID");
 
-            final Appointment appointment = Database.getInstance(getActivity()).getAppointment(appointmentTitle);
+            final Appointment appointment = Database.getInstance(getActivity()).getAppointment(appointmentID);
 
             TextView editText_name = (TextView)(rootView.findViewById(R.id.textView_title));
             editText_name.setText(appointment.title, TextView.BufferType.EDITABLE);
@@ -405,7 +408,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                         @Override
                         public void onClick(View v) {
                             getActivity().getSupportFragmentManager().popBackStack();
-                            Database.getInstance(getActivity()).deleteAppointment(appointment.title);
+                            Database.getInstance(getActivity()).deleteAppointment(appointment.id);
                         }
                     }
             );

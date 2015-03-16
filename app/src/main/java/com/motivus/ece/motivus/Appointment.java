@@ -7,6 +7,7 @@ import android.os.Parcelable;
  * Created by dongx on 2015-02-18.
  */
 public final class Appointment implements Parcelable {
+    public int id;
     public String title;
     public String detail;
     public String date;
@@ -25,8 +26,9 @@ public final class Appointment implements Parcelable {
         readFromParcel(in);
     }
 
-    public Appointment(String title, String detail, String date, String time, Double latitude, Double longitude, int done, byte[] pic) {
+    public Appointment(int id, String title, String detail, String date, String time, Double latitude, Double longitude, int done, byte[] pic) {
         super();
+        this.id = id;
         this.title = title;
         this.detail = detail;
         this.date = date;
@@ -38,6 +40,7 @@ public final class Appointment implements Parcelable {
     }
 
     public void readFromParcel(Parcel in) {
+        this.id = in.readInt();
         this.title = in.readString();
         this.detail = in.readString();
         this.date = in.readString();
@@ -51,6 +54,7 @@ public final class Appointment implements Parcelable {
         return 0;
     }
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(this.id);
         dest.writeString(this.title);
         dest.writeString(this.detail);
         dest.writeString(this.date);

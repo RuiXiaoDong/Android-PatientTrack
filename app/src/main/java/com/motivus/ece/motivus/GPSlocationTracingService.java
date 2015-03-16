@@ -121,7 +121,7 @@ public class GPSlocationTracingService extends Service {
                 //Check the location
                 if (diffDistance <= LOCATION_THRESHOLD_DISTANCE) {
                     appointments.get(i).done = 1;
-                    if(Database.getInstance(getApplication()).existAppointment(appointments.get(i).title))
+                    if(Database.getInstance(getApplication()).existAppointment(appointments.get(i).id))
                         Database.getInstance(getApplication()).updateAppointment(appointments.get(i));
                     Toast.makeText(getApplication(),
                             "\"" + appointments.get(i).title + "\" appointment DONE!", Toast.LENGTH_SHORT)

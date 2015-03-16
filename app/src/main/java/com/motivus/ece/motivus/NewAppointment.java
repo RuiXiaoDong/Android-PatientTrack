@@ -92,6 +92,7 @@ public class NewAppointment extends ActionBarActivity {
                     @Override
                     public void onClick(View v) {
                         Appointment appointment = new Appointment();
+                        appointment.id = Database.getInstance(getApplication()).getMaxAppointmentID();
                         appointment.title = titleAppointment.getText().toString();
                         appointment.detail = detailAppointment.getText().toString();
                         appointment.date = dateAppointment.getText().toString();
