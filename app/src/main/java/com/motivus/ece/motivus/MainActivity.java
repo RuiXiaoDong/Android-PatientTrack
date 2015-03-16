@@ -62,6 +62,10 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
         //Set up the database
         mDatabase = Database.getInstance(this);
+        Appointment[] demoAppointments = HelperFunctions.demoAppointments();
+        for(int i = 0; i < demoAppointments.length; i++) {
+            mDatabase.addAppointment(demoAppointments[i]);
+        }
 
         //Set up the action bar.
         final ActionBar actionBar = getSupportActionBar();

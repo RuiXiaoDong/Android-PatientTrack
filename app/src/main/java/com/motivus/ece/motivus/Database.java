@@ -6,11 +6,15 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.widget.Toast;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
 
 /**
  * Created by dongx on 2015-02-18.
@@ -110,10 +114,16 @@ public class Database extends SQLiteOpenHelper {
     }
 
     public long addAppointment(Appointment appointment){
+        long newRowId = -1;
+        if(appointment == null)
+            return newRowId;
         SQLiteDatabase db = this.getWritableDatabase();
 
         // Create a new map of values, where column names are the keys
         ContentValues values = new ContentValues();
+        if(appointment.title == null || appointment.title.compareToIgnoreCase("") == 0)
+            return newRowId;
+
         values.put(APPOINTMENT_COLUMN_NAME_TITLE, appointment.title);
         values.put(APPOINTMENT_COLUMN_NAME_DETAIL, appointment.detail);
         values.put(APPOINTMENT_COLUMN_NAME_DATE, appointment.date);
@@ -123,7 +133,6 @@ public class Database extends SQLiteOpenHelper {
         values.put(APPOINTMENT_COLUMN_NAME_DONE, appointment.done);
         values.put(APPOINTMENT_COLUMN_NAME_PIC, appointment.pic);
 
-        long newRowId = -1;
         if(existAppointment(appointment.title)) {
             updateAppointment(appointment);
         }
@@ -234,6 +243,57 @@ public class Database extends SQLiteOpenHelper {
         db.delete(APPOINTMENT_TABLE_NAME, //table name
                 APPOINTMENT_COLUMN_NAME_TITLE + " = ?",  // selections
                 new String[] { appointmentTitle }); //selections args
+    }
+
+    public float[] getAppointmentAccomplishmentRate_Weekly(int numOfWeeks) {
+        //Initialize all the accomplishment rate
+        float[] rates = new float[numOfWeeks];
+        int[] numOfDoneAppointment = new int[numOfWeeks];
+        int[] numOfAllAppointment = new int[numOfWeeks];
+        for(int i = 0; i <  numOfWeeks; i++) {
+            rates[i] = 0.0f;
+            numOfDoneAppointment[i] = 0;
+            numOfAllAppointment[i] = 0;
+        }
+        //Get all the appointments
+        ArrayList<Appointment> appointments = getAllAppointments();
+        //Check the date
+        Calendar calendar = Calendar.getInstance();
+        Date currentDate = calendar.getTime();
+
+        for(int i = 0; i <  appointments.size(); i++) {
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+            String appointmentDate = "" + appointments.get(i).date + ' ' + appointments.get(i).time;
+            Date compareDate;
+
+            try {
+                compareDate = formatter.parse(appointmentDate);
+            } catch (ParseException e) {
+                e.printStackTrace();
+                continue;
+            }
+            long diff = currentDate.getTime() - compareDate.getTime();
+            int diffDays = (int) (diff / (24 * 60 * 60 * 1000));
+            int diffhours = (int) (diff / (60 * 60 * 1000));
+            int diffmin = (int) (diff / (60 * 1000));
+            int diffsec = (int) (diff / (1000));
+
+            for(int j = 0; j <  numOfWeeks; j++) {
+                if(diffDays >= j*7 && diffDays < (j+1)*7) {
+                    numOfAllAppointment[j]++;
+                    if (appointments.get(i).done == 1) {
+                        numOfDoneAppointment[j]++;
+                    }
+                }
+            }
+        }
+        for(int i = 0; i <  numOfWeeks; i++) {
+            if(numOfAllAppointment[i] != 0) {
+                rates[i] = (float) numOfDoneAppointment[i] / numOfAllAppointment[i];
+            }
+        }
+
+        return rates;
     }
 
     public long addGPS(GPSlocation gpsLocation){

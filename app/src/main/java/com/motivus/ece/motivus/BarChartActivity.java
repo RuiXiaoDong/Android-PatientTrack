@@ -1,12 +1,10 @@
 package com.motivus.ece.motivus;
 
 import android.support.v4.app.FragmentActivity;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.WindowManager;
-import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.BarChart;
@@ -16,18 +14,12 @@ import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
-import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 
 import java.util.ArrayList;
-
 
 public class BarChartActivity extends FragmentActivity {
 
     protected BarChart mChart;
-    private TextView tvX, tvY;
-    private String[] mMonths = new String[] {
-            "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dec"
-    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +49,7 @@ public class BarChartActivity extends FragmentActivity {
         rightAxis.setDrawGridLines(false);
         rightAxis.setLabelCount(8);
 
-        setData(12, 50);
+        setData(5, 100);
 
         Legend l = mChart.getLegend();
         l.setPosition(Legend.LegendPosition.BELOW_CHART_LEFT);
@@ -94,22 +86,21 @@ public class BarChartActivity extends FragmentActivity {
 
         ArrayList<String> xVals = new ArrayList<String>();
         for (int i = 0; i < count; i++) {
-            xVals.add(mMonths[i % 12]);
+            xVals.add("Week" + (i + 1));
         }
 
-        ArrayList<BarEntry> yVals1 = new ArrayList<BarEntry>();
-
+        float[] rates = Database.getInstance(getApplicationContext()).getAppointmentAccomplishmentRate_Weekly(count);
+        ArrayList<BarEntry> yVals = new ArrayList<BarEntry>();
         for (int i = 0; i < count; i++) {
-            float mult = (range + 1);
-            float val = (float) (Math.random() * mult);
-            yVals1.add(new BarEntry(val, i));
+            float val = rates[i] * 100;
+            yVals.add(new BarEntry(val, i));
         }
 
-        BarDataSet set1 = new BarDataSet(yVals1, "DataSet");
-        set1.setBarSpacePercent(35f);
+        BarDataSet set = new BarDataSet(yVals, "DataSet");
+        set.setBarSpacePercent(35f);
 
         ArrayList<BarDataSet> dataSets = new ArrayList<BarDataSet>();
-        dataSets.add(set1);
+        dataSets.add(set);
 
         BarData data = new BarData(xVals, dataSets);
         data.setValueTextSize(10f);
