@@ -47,4 +47,6 @@ public class AppointmentAdapter extends ArrayAdapter {
         holder.titleText.setText(item.title);
         return viewToUse;
     }
+
+
 }

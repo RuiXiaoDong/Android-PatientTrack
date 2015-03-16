@@ -4,8 +4,9 @@ import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.provider.CalendarContract;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -45,6 +46,7 @@ public class NewAppointment extends ActionBarActivity {
 
         //Add time button
         final EditText dateAppointment = (EditText) findViewById(R.id.editText_date);
+       // final EditText enddateAppointment = (EditText) findViewById(R.id.editText_enddate);
         final EditText timeAppointment = (EditText) findViewById(R.id.editText_time);
         //Add map button
         Button timePicker = (Button) findViewById(R.id.button_timePicker);
@@ -95,10 +97,41 @@ public class NewAppointment extends ActionBarActivity {
                         appointment.title = titleAppointment.getText().toString();
                         appointment.detail = detailAppointment.getText().toString();
                         appointment.date = dateAppointment.getText().toString();
+                       // appointment.enddate = enddateAppointment.getText().toString();
                         appointment.time = timeAppointment.getText().toString();
+
                         appointment.latitude = latitude;
                         appointment.longitude = longitude;
+
                         Database.getInstance(getApplication()).addAppointment(appointment);
+
+
+                        //***********
+                        // long calId = 0;
+                        //  long startMillis = 0;*/
+                        Calendar beginTime = Calendar.getInstance();
+                        beginTime.set(2015, 4, 17, 7, 30);
+                        Calendar endTime = Calendar.getInstance();
+                        endTime.set(2015, 4, 17, 8, 30);
+                        Intent intent = new Intent(Intent.ACTION_INSERT)
+                                .setData(CalendarContract.Events.CONTENT_URI)
+                                .putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, beginTime.getTimeInMillis())
+                                        //    .putExtra(CalendarContract.EXTRA_EVENT_END_TIME, endTime.getTimeInMillis())
+                                .putExtra(CalendarContract.Events.TITLE, appointment.title)
+                                .putExtra(CalendarContract.Events.DESCRIPTION, appointment.detail)
+                                .putExtra(CalendarContract.Events.EVENT_LOCATION, "The gym");
+                        //    .putExtra(CalendarContract.Events.AVAILABILITY, CalendarContract.Events.AVAILABILITY_BUSY)
+                        //    .putExtra(Intent.EXTRA_EMAIL, "rowan@example.com,trevor@example.com");
+                        startActivity(intent);
+                        //***
+
+
+
+
+
+
+
+
 
                         Intent data = new Intent();
                         if (getParent() == null) {
@@ -111,6 +144,10 @@ public class NewAppointment extends ActionBarActivity {
                 }
         );
     }
+
+
+    private void addEvent() {
+      }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

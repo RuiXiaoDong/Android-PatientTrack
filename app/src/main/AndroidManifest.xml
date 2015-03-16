@@ -41,6 +41,11 @@
             android:screenOrientation="portrait" >
         </activity>
         <activity
+            android:name=".EditAppointment"
+            android:label="title_activity_edit_appointment"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
             android:name=".GoogleMaps"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
