@@ -59,7 +59,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         //Constantly monitoring the GPS location
         startService(new Intent(this, GPSlocationTracingService.class));
         //Constantly monitoring the photo usage
-        startService(new Intent(this, PhotoUsageTracingService.class));
+        startService(new Intent(this, PhoneUsageTracingService.class));
 
         //Set up the database
         mDatabase = Database.getInstance(this);
@@ -431,8 +431,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                             getActivity().getSupportFragmentManager().popBackStack();
                             Database.getInstance(getActivity()).deleteAppointment(appointment.id);
                         }
-                        }
-
+                    }
             );
             final Button editAppointment = (Button) rootView.findViewById(R.id.button_edit);
             editAppointment.setOnClickListener(
@@ -443,47 +442,34 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                             editAppointment.setVisibility(EditText.INVISIBLE);
                             deleteAppointment.setVisibility(EditText.INVISIBLE);
                             editText_name.setEnabled(false);
-
-
-
                             editText_detail.setEnabled(true);
-
-
                             //editText_latitude.setEnabled(true);
                             //appointment.latitude = editText_latitude.getText().toString();
-
-                      //      editText_longitude.setEnabled(true);
-                        //    appointment.longitude = editText_longitude.getText().toString();
-
+                            //editText_longitude.setEnabled(true);
+                            //appointment.longitude = editText_longitude.getText().toString();
                             editText_time.setEnabled(true);
-
-
                             editText_date.setEnabled(true);
-
-                           // appointment.latitude = editText_latitude.getT;
-                           // appointment.longitude = editText_longitude.getText();
-
+                            //appointment.latitude = editText_latitude.getT;
+                            //appointment.longitude = editText_longitude.getText();
                         }
                     }
             );
-                            Button updatetAppointment = (Button) rootView.findViewById(R.id.button_done);
-                                updatetAppointment.setOnClickListener(
-                                    new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View v) {
-
-                                            appointment.title = editText_name.getText().toString();
-                                            appointment.detail = editText_detail.getText().toString();
-                                            appointment.time = editText_time.getText().toString();
-                                            appointment.date = editText_date.getText().toString();
-                                            Database.getInstance(getActivity()).updateAppointment(appointment);
-                                            Toast.makeText(getActivity(), "Saved!", Toast.LENGTH_SHORT).show();
-                                            getActivity().getSupportFragmentManager().popBackStack();
-
-                      //      Intent intent = new Intent(getActivity(), EditAppointment.class);
-                        //    startActivity(intent);
-                            //  getActivity().getSupportFragmentManager().popBackStack();
-                          //  Database.getInstance(getActivity()).updateAppointment(appointment);
+            Button updatetAppointment = (Button) rootView.findViewById(R.id.button_done);
+            updatetAppointment.setOnClickListener(
+                    new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            appointment.title = editText_name.getText().toString();
+                            appointment.detail = editText_detail.getText().toString();
+                            appointment.time = editText_time.getText().toString();
+                            appointment.date = editText_date.getText().toString();
+                            Database.getInstance(getActivity()).updateAppointment(appointment);
+                            Toast.makeText(getActivity(), "Saved!", Toast.LENGTH_SHORT).show();
+                            getActivity().getSupportFragmentManager().popBackStack();
+                            //Intent intent = new Intent(getActivity(), EditAppointment.class);
+                            //startActivity(intent);
+                            //getActivity().getSupportFragmentManager().popBackStack();
+                            //Database.getInstance(getActivity()).updateAppointment(appointment);
                         }
                     }
             );

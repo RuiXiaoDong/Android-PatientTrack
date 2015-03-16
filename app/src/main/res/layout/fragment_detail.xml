@@ -9,17 +9,18 @@
 
     <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="400dp"
+        android:layout_height="match_parent"
         android:layout_alignParentTop="true"
-        android:id="@+id/scrollView"
-        android:layout_alignParentBottom="true">
-
-        android:layout_above="@+id/button_delete">
+        android:layout_above="@+id/button_edit"
+        android:id="@+id/scrollView">
 
         <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
-            android:layout_height="300dp"
-            android:id="@+id/detailFragment">
+            android:layout_height="match_parent"
+            android:id="@+id/detailFragment"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_above="@+id/button_edit">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -188,7 +189,10 @@
         android:layout_alignParentBottom="true"
         android:layout_alignRight="@+id/scrollView"
         android:layout_alignEnd="@+id/scrollView"
-        android:layout_alignTop="@+id/button_edit" />
+        android:layout_alignTop="@+id/button_edit"
+        android:textColor="#ffffff"
+        android:background="#ff1f75ff"
+        android:textStyle="bold|normal|italic" />
 
     <Button
         android:layout_width="wrap_content"
@@ -196,16 +200,20 @@
         android:id="@+id/button_edit"
         android:layout_alignParentBottom="true"
         android:layout_alignLeft="@+id/scrollView"
-        android:text="@string/button_edit" />
+        android:text="@string/button_edit"
+        android:textColor="#ffffff"
+        android:background="#ff1f75ff"
+        android:textStyle="bold|normal|italic" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/button_done"
-        android:gravity="bottom|center_horizontal"
-
         android:text="@string/button_done"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        />
+        android:textColor="#ffffff"
+        android:background="#ff1f75ff"
+        android:textStyle="bold|normal|italic" />
+
 </RelativeLayout>
