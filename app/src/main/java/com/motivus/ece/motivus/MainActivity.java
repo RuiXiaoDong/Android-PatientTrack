@@ -191,8 +191,8 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                     return AppointmentFragment.newInstance(position + 1);
                 case 1:
                     return ReportFragment.newInstance(position + 1);
-                case 2:
-                    return GoogleCalendarFragment.newInstance(position + 1);
+                //case 2:
+                //    return GoogleCalendarFragment.newInstance(position + 1);
                 default:
                     return AppointmentFragment.newInstance(position + 1);
             }
@@ -201,7 +201,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         @Override
         public int getCount() {
             // Show 2 total pages.
-            return 3;
+            return 2;
         }
 
         @Override
@@ -223,8 +223,8 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                     return getString(R.string.title_section1).toUpperCase(l);
                 case 1:
                     return getString(R.string.title_section3).toUpperCase(l);
-                case 2:
-                    return getString(R.string.title_section2).toUpperCase(l);
+                //case 2:
+                //    return getString(R.string.title_section2).toUpperCase(l);
             }
             return null;
         }
@@ -442,13 +442,12 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             return created;
         }
     }
-    //*****
+
     public static class GoogleCalendarFragment extends Fragment {
         /**
          * The fragment argument representing the section number for this
          * fragment.
          */
-
         private static final String ARG_SECTION_NUMBER = "section_number";
         private WebView webView;
         /**
@@ -470,12 +469,8 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-
-           // super.onCreate(savedInstanceState);
+            //super.onCreate(savedInstanceState);
             View rootView = inflater.inflate(R.layout.fragment_cal, container, false);
-
-
-
             //see map
             Button mapTrackButton = (Button) rootView.findViewById(R.id.button_calendar);
             mapTrackButton.setOnClickListener(
@@ -487,22 +482,9 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                         }
                     }
             );
-
             return rootView;
         }
-
-
-
-        }
-
-
-
-
-    //***
-
-
-
-
+    }
 
     public static class DetailFragment extends Fragment {
         public DetailFragment() {
