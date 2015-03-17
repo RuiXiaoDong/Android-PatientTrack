@@ -28,21 +28,14 @@ public class NewAppointment extends ActionBarActivity {
     private double longitude;
     DatePickerDialog mDatePicker;
     TimePickerDialog mTimePicker;
-    /*int hour;
-    int minute;
-    int year ;
-    int month ;
-    int day ;*/
-
+    
     int hour2;
     int minute2;
     int year2 ;
     int month2 ;
     int day2 ;
-
-
-LatLng latLng;
     String loc;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,18 +65,17 @@ LatLng latLng;
             @Override
             public void onClick(View v) {
                 Calendar calendar = Calendar.getInstance();
-               int year = calendar.get(Calendar.YEAR);
-               int month = calendar.get(Calendar.MONTH);
-               int day = calendar.get(Calendar.DAY_OF_MONTH);
-               int hour = calendar.get(Calendar.HOUR_OF_DAY);
-              int minute = calendar.get(Calendar.MINUTE);
+                int year = calendar.get(Calendar.YEAR);
+                int month = calendar.get(Calendar.MONTH);
+                int day = calendar.get(Calendar.DAY_OF_MONTH);
+                int hour = calendar.get(Calendar.HOUR_OF_DAY);
+                int minute = calendar.get(Calendar.MINUTE);
 
                 //Pick time within the day
-
                 mTimePicker = new TimePickerDialog(NewAppointment.this, new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker timePicker, int  selectedHour,  int selectedMinute) {
-                       String  hours = (selectedHour < 10 ) ? "0" + selectedHour : "" + selectedHour;
+                        String  hours = (selectedHour < 10 ) ? "0" + selectedHour : "" + selectedHour;
                         String mins = (selectedMinute < 10) ? "0" + selectedMinute : "" + selectedMinute;
                         timeAppointment.setText(hours + ":" + mins);
                         hour2= selectedHour;
@@ -93,7 +85,6 @@ LatLng latLng;
                 mTimePicker.show();
 
                 //Pick the date, month, year
-
                 mDatePicker = new DatePickerDialog(NewAppointment.this, new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker timePicker, int year, int monthOfYear, int dayOfMonth) {
@@ -101,9 +92,9 @@ LatLng latLng;
                         String months = (monthOfYear < 10 ) ? "0" + monthOfYear : "" + monthOfYear;
                         String days = (dayOfMonth < 10) ? "0" + dayOfMonth : "" + dayOfMonth;
                         dateAppointment.setText(year + "-" + months + "-" + days);
-                        month2 = (monthOfYear < 10 ) ?  monthOfYear :   monthOfYear;
-                        year2= year;
-                        day2= (dayOfMonth < 10) ?  dayOfMonth :  dayOfMonth;
+                        month2 = monthOfYear -1;
+                        year2 = year;
+                        day2 = dayOfMonth;
 
                     }
                 }, year, month, day);//Yes 24 hour time
@@ -122,54 +113,25 @@ LatLng latLng;
                         appointment.title = titleAppointment.getText().toString();
                         appointment.detail = detailAppointment.getText().toString();
                         appointment.date = dateAppointment.getText().toString();
-                       // appointment.enddate = enddateAppointment.getText().toString();
                         appointment.time = timeAppointment.getText().toString();
-
                         appointment.latitude = latitude;
                         appointment.longitude = longitude;
+                        appointment.done = 0;
+                        appointment.score = 0;
 
                         Database.getInstance(getApplication()).addAppointment(appointment);
+                        Calendar beginTime = Calendar.getInstance();
 
-
-                        //***********
-
-
-                      /*  Calendar cal = Calendar.getInstance();
-                        cal.set(Calendar.DAY_OF_MONTH, day);
-                        cal.set(Calendar.MONTH, month);
-                        cal.set(Calendar.YEAR, year);
-                        cal.set(Calendar.HOUR_OF_DAY, hour);
-                        cal.set(Calendar.MINUTE, minute);*/
-                        // long calId = 0;
-                        //  long startMillis = 0;*/
-                     Calendar beginTime = Calendar.getInstance();
-
-                    beginTime.set(year2, month2, day2, hour2, minute2);
-                     /*   Calendar endTime = Calendar.getInstance();
-                        endTime.set(2015, 4, 17, 8, 30);*/
+                        beginTime.set(year2, month2, day2, hour2, minute2);
 
                         Intent intent = new Intent(Intent.ACTION_INSERT)
                                 .setData(CalendarContract.Events.CONTENT_URI)
                                 .putExtra(CalendarContract.Events._ID, 8)
                                 .putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, beginTime.getTimeInMillis())
-                                        //    .putExtra(CalendarContract.EXTRA_EVENT_END_TIME, endTime.getTimeInMillis())
                                 .putExtra(CalendarContract.Events.TITLE, appointment.title)
                                 .putExtra(CalendarContract.Events.DESCRIPTION, appointment.detail)
                                 .putExtra(CalendarContract.Events.EVENT_LOCATION, loc);
-                        //long eventId = intent.getLong(intent.getColumnIndex("_id"));
-                        //    .putExtra(CalendarContract.Events.AVAILABILITY, CalendarContract.Events.AVAILABILITY_BUSY)
-                        //    .putExtra(Intent.EXTRA_EMAIL, "rowan@example.com,trevor@example.com");
-
                         startActivity(intent);
-                        //***
-
-
-
-
-
-
-
-
 
                         Intent data = new Intent();
                         if (getParent() == null) {
@@ -182,10 +144,6 @@ LatLng latLng;
                 }
         );
     }
-
-
-    private void addEvent() {
-      }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
