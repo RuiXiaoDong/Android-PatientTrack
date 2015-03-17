@@ -14,8 +14,8 @@ import android.widget.Toast;
 
 import java.util.Date;
 
-public class PhotoUsageTracingService extends Service {
-    public PhotoUsageTracingService() {
+public class PhoneUsageTracingService extends Service {
+    public PhoneUsageTracingService() {
     }
 
     @Override

@@ -28,10 +28,10 @@ import java.util.ArrayList;
  * Created by dongx
  */
 public class TrackingMap extends FragmentActivity implements LocationListener {
-    private GoogleMap googleMap;
+    private GoogleMap mGoogleMap;
     private UiSettings uiSettings;
     private Marker selectedLocation;
-    private LocationManager locationManager;
+    private LocationManager mLocationManager;
     private static final long MIN_TIME = 400;
     private static final float MIN_DISTANCE = 1000;
     private LatLng latLng;
@@ -53,27 +53,32 @@ public class TrackingMap extends FragmentActivity implements LocationListener {
     }
 
     private void initializeMap() {
-        final LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+        mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        if (!mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
             alertTurnOnGPS();
         }
 
-        if (googleMap == null) {
-            googleMap = ((SupportMapFragment)getSupportFragmentManager().findFragmentById(R.id.map)).getMap();
-            googleMap.setMyLocationEnabled(true);
+        if (mGoogleMap == null) {
+            mGoogleMap = ((SupportMapFragment)getSupportFragmentManager().findFragmentById(R.id.map)).getMap();
+            mGoogleMap.setMyLocationEnabled(true);
 
-            uiSettings = googleMap.getUiSettings();
+            uiSettings = mGoogleMap.getUiSettings();
             uiSettings.setAllGesturesEnabled(true);
 
-            locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-            locationManager.requestLocationUpdates(
+            mLocationManager.removeUpdates(this);
+            mLocationManager.requestLocationUpdates(
                     LocationManager.NETWORK_PROVIDER, MIN_TIME,
                     MIN_DISTANCE, this);
 
-            if (googleMap == null) {
+            if (mGoogleMap == null) {
                 Toast.makeText(getApplication(),
                         "Unable to create the map", Toast.LENGTH_SHORT)
                         .show();
+            }
+            else {
+                CameraPosition cameraPosition = new CameraPosition.Builder().target(
+                        new LatLng(43.653226, -79.3831842)).zoom(10).build();
+                mGoogleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
             }
         }
     }
@@ -84,7 +89,7 @@ public class TrackingMap extends FragmentActivity implements LocationListener {
         }
 
         // Clears all the existing markers on the map
-        googleMap.clear();
+        mGoogleMap.clear();
 
         // Adding Markers on Google Map for each matching address
         for (int i = 0; i < addresses.size(); i++) {
@@ -96,13 +101,13 @@ public class TrackingMap extends FragmentActivity implements LocationListener {
             markerOptions = new MarkerOptions();
             markerOptions.position(latLng);
 
-            googleMap.addMarker(markerOptions);
+            mGoogleMap.addMarker(markerOptions);
 
             // Locate the first location
             if (i == 0) {
                 CameraPosition cameraPosition = new CameraPosition.Builder().target(
                         latLng).zoom(12).build();
-                googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                mGoogleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
             }
         }
     }
@@ -143,6 +148,12 @@ public class TrackingMap extends FragmentActivity implements LocationListener {
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        mLocationManager.removeUpdates(this);
+    }
+
+    @Override
     public void onLocationChanged(Location location) {
         if (location == null)
             return;
@@ -150,9 +161,8 @@ public class TrackingMap extends FragmentActivity implements LocationListener {
                 location.getLongitude());
         CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng,
                 10);
-        googleMap.animateCamera(cameraUpdate);
-        locationManager.removeUpdates(this);
-        googleMap.getMaxZoomLevel();
+        mGoogleMap.animateCamera(cameraUpdate);
+        mGoogleMap.getMaxZoomLevel();
     }
 
     @Override

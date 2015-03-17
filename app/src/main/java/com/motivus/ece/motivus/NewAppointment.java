@@ -64,7 +64,7 @@ LatLng latLng;
 
         //Add time button
         final EditText dateAppointment = (EditText) findViewById(R.id.editText_date);
-       // final EditText enddateAppointment = (EditText) findViewById(R.id.editText_enddate);
+        //final EditText enddateAppointment = (EditText) findViewById(R.id.editText_enddate);
         final EditText timeAppointment = (EditText) findViewById(R.id.editText_time);
         //Add map button
         Button timePicker = (Button) findViewById(R.id.button_timePicker);
@@ -118,6 +118,7 @@ LatLng latLng;
                     @Override
                     public void onClick(View v) {
                         Appointment appointment = new Appointment();
+                        appointment.id = Database.getInstance(getApplication()).getMaxAppointmentID();
                         appointment.title = titleAppointment.getText().toString();
                         appointment.detail = detailAppointment.getText().toString();
                         appointment.date = dateAppointment.getText().toString();

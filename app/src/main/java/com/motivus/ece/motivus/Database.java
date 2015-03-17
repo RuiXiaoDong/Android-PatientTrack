@@ -6,8 +6,15 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.widget.Toast;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Iterator;
 
 /**
  * Created by dongx on 2015-02-18.
@@ -21,6 +28,7 @@ public class Database extends SQLiteOpenHelper {
 
     //Appointment table
     public static final String APPOINTMENT_TABLE_NAME = "appointments";
+    public static final String APPOINTMENT_COLUMN_NAME_ID = "id";
     public static final String APPOINTMENT_COLUMN_NAME_TITLE = "title";
     public static final String APPOINTMENT_COLUMN_NAME_DETAIL = "detail";
     public static final String APPOINTMENT_COLUMN_NAME_DATE = "date";
@@ -32,7 +40,8 @@ public class Database extends SQLiteOpenHelper {
 
     public static final String APPOINTMENT_SQL_CREATE_ENTRIES =
             "CREATE TABLE " + APPOINTMENT_TABLE_NAME + " (" +
-                    APPOINTMENT_COLUMN_NAME_TITLE + " TEXT PRIMARY KEY," +
+                    APPOINTMENT_COLUMN_NAME_ID + " INTEGER PRIMARY KEY," +
+                    APPOINTMENT_COLUMN_NAME_TITLE + " TEXT," +
                     APPOINTMENT_COLUMN_NAME_DETAIL + " TEXT," +
                     APPOINTMENT_COLUMN_NAME_DATE + " TEXT," +
                     APPOINTMENT_COLUMN_NAME_TIME + " TEXT," +
@@ -68,6 +77,8 @@ public class Database extends SQLiteOpenHelper {
     public static final String[] SMS_COLUMNS = {SMS_TABLE_NAME,
             SMS_COLUMN_NAME_TIME};
 
+    private int maxID;
+
     public static Database getInstance(Context ctx) {
         if (mInstance == null) {
             mInstance = new Database(ctx.getApplicationContext());
@@ -77,6 +88,7 @@ public class Database extends SQLiteOpenHelper {
 
     private Database(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        maxID = 0;
     }
 
     @Override
@@ -106,11 +118,28 @@ public class Database extends SQLiteOpenHelper {
         onUpgrade(db, oldVersion, newVersion);
     }
 
-    public long addAppointment(Appointment appointment){
+    public void setMaxAppointmentID(int id) {
+        if(maxID < id)
+            maxID = id;
+    }
+
+    public int getMaxAppointmentID() {
+        maxID++;
+        return maxID;
+    }
+
+    public long addAppointment(Appointment appointment) {
+        long newRowId = -1;
+        if(appointment == null)
+            return newRowId;
         SQLiteDatabase db = this.getWritableDatabase();
 
         // Create a new map of values, where column names are the keys
         ContentValues values = new ContentValues();
+        if(appointment.title == null || appointment.title.compareToIgnoreCase("") == 0)
+            return newRowId;
+
+        values.put(APPOINTMENT_COLUMN_NAME_ID, appointment.id);
         values.put(APPOINTMENT_COLUMN_NAME_TITLE, appointment.title);
         values.put(APPOINTMENT_COLUMN_NAME_DETAIL, appointment.detail);
         values.put(APPOINTMENT_COLUMN_NAME_DATE, appointment.date);
@@ -120,8 +149,7 @@ public class Database extends SQLiteOpenHelper {
         values.put(APPOINTMENT_COLUMN_NAME_DONE, appointment.done);
         values.put(APPOINTMENT_COLUMN_NAME_PIC, appointment.pic);
 
-        long newRowId = -1;
-        if(existAppointment(appointment.title)) {
+        if(existAppointment(appointment.id)) {
             updateAppointment(appointment);
         }
         else {
@@ -134,12 +162,12 @@ public class Database extends SQLiteOpenHelper {
         return newRowId;
     }
 
-    public boolean existAppointment(String name) {
+    public boolean existAppointment(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.query(APPOINTMENT_TABLE_NAME,
                 null,
-                APPOINTMENT_COLUMN_NAME_TITLE + " = ?",
-                new String[] { name }, null, null, null);
+                APPOINTMENT_COLUMN_NAME_ID + " = ?",
+                new String[] { "" + id }, null, null, null);
         boolean exists = (cursor.getCount() > 0);
         cursor.close();
         return exists;
@@ -152,6 +180,7 @@ public class Database extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
+        values.put(APPOINTMENT_COLUMN_NAME_ID, appointment.id);
         values.put(APPOINTMENT_COLUMN_NAME_TITLE, appointment.title);
         values.put(APPOINTMENT_COLUMN_NAME_DETAIL, appointment.detail);
         values.put(APPOINTMENT_COLUMN_NAME_DATE, appointment.date);
@@ -162,29 +191,30 @@ public class Database extends SQLiteOpenHelper {
         values.put(APPOINTMENT_COLUMN_NAME_PIC, appointment.pic);
 
         //Updating row
-        return db.update(APPOINTMENT_TABLE_NAME, values, APPOINTMENT_COLUMN_NAME_TITLE + " = ?",
-                new String[] { appointment.title });
+        return db.update(APPOINTMENT_TABLE_NAME, values, APPOINTMENT_COLUMN_NAME_ID + " = ?",
+                new String[] { "" + appointment.id });
     }
 
-    public Appointment getAppointment(String name){
-        if(existAppointment(name)) {
+    public Appointment getAppointment(int id){
+        if(existAppointment(id)) {
             SQLiteDatabase db = this.getReadableDatabase();
             Appointment appointment = new Appointment();
 
             Cursor cursor = db.query(APPOINTMENT_TABLE_NAME,
                     null,
-                    APPOINTMENT_COLUMN_NAME_TITLE + " = ?",
-                    new String[] { name }, null, null, null);
+                    APPOINTMENT_COLUMN_NAME_ID + " = ?",
+                    new String[] { "" + id }, null, null, null);
             if (cursor != null) {
                 cursor.moveToFirst();
-                appointment.title = cursor.getString(0);
-                appointment.detail = cursor.getString(1);
-                appointment.date = cursor.getString(2);
-                appointment.time = cursor.getString(3);
-                appointment.latitude = Double.parseDouble(cursor.getString(4));
-                appointment.longitude = Double.parseDouble(cursor.getString(5));
-                appointment.done = cursor.getInt(6);
-                appointment.pic = cursor.getBlob(7);
+                appointment.id = cursor.getInt(0);
+                appointment.title = cursor.getString(1);
+                appointment.detail = cursor.getString(2);
+                appointment.date = cursor.getString(3);
+                appointment.time = cursor.getString(4);
+                appointment.latitude = Double.parseDouble(cursor.getString(5));
+                appointment.longitude = Double.parseDouble(cursor.getString(6));
+                appointment.done = cursor.getInt(7);
+                appointment.pic = cursor.getBlob(8);
 
                 cursor.close();
                 return appointment;
@@ -196,7 +226,6 @@ public class Database extends SQLiteOpenHelper {
 
     public ArrayList<Appointment> getAllAppointments() {
         ArrayList<Appointment> appointments = new ArrayList<Appointment>();
-
         //build the query
         String query = "SELECT * FROM " + APPOINTMENT_TABLE_NAME;
 
@@ -209,14 +238,15 @@ public class Database extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             do {
                 appointment = new Appointment();
-                appointment.title = cursor.getString(0);
-                appointment.detail = cursor.getString(1);
-                appointment.date = cursor.getString(2);
-                appointment.time = cursor.getString(3);
-                appointment.latitude = Double.parseDouble(cursor.getString(4));
-                appointment.longitude = Double.parseDouble(cursor.getString(5));
-                appointment.done = cursor.getInt(6);
-                appointment.pic = cursor.getBlob(7);
+                appointment.id = cursor.getInt(0);
+                appointment.title = cursor.getString(1);
+                appointment.detail = cursor.getString(2);
+                appointment.date = cursor.getString(3);
+                appointment.time = cursor.getString(4);
+                appointment.latitude = Double.parseDouble(cursor.getString(5));
+                appointment.longitude = Double.parseDouble(cursor.getString(6));
+                appointment.done = cursor.getInt(7);
+                appointment.pic = cursor.getBlob(8);
 
                 appointments.add(appointment);
             } while (cursor.moveToNext());
@@ -226,12 +256,63 @@ public class Database extends SQLiteOpenHelper {
         return appointments;
     }
 
-    public void deleteAppointment(String appointmentTitle) {
+    public void deleteAppointment(int id) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         db.delete(APPOINTMENT_TABLE_NAME, //table name
-                APPOINTMENT_COLUMN_NAME_TITLE + " = ?",  // selections
-                new String[] { appointmentTitle }); //selections args
+                APPOINTMENT_COLUMN_NAME_ID + " = ?",  // selections
+                new String[] { "" + id }); //selections args
+    }
+
+    public AppointmentStatistic[] getAppointmentAccomplishmentRate_Weekly(int numOfWeeks) {
+        //Initialize all the accomplishment rate
+        AppointmentStatistic[] appointmentStatistics = new AppointmentStatistic[numOfWeeks];
+        for(int i = 0; i <  numOfWeeks; i++) {
+            AppointmentStatistic appointmentStatistic = new AppointmentStatistic();
+            appointmentStatistic.rate = 0.0f;
+            appointmentStatistic.accomplishedAppointment = 0;
+            appointmentStatistic.totalAppointment = 0;
+            appointmentStatistics[i] = appointmentStatistic;
+        }
+        //Get all the appointments
+        ArrayList<Appointment> appointments = getAllAppointments();
+        //Check the date
+        Calendar calendar = Calendar.getInstance();
+        Date currentDate = calendar.getTime();
+
+        for(int i = 0; i <  appointments.size(); i++) {
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+            String appointmentDate = "" + appointments.get(i).date + ' ' + appointments.get(i).time;
+            Date compareDate;
+
+            try {
+                compareDate = formatter.parse(appointmentDate);
+            } catch (ParseException e) {
+                e.printStackTrace();
+                continue;
+            }
+            long diff = currentDate.getTime() - compareDate.getTime();
+            int diffDays = (int) (diff / (24 * 60 * 60 * 1000));
+            int diffhours = (int) (diff / (60 * 60 * 1000));
+            int diffmin = (int) (diff / (60 * 1000));
+            int diffsec = (int) (diff / (1000));
+
+            for(int j = 0; j <  numOfWeeks; j++) {
+                if(diffDays >= j*7 && diffDays < (j+1)*7) {
+                    appointmentStatistics[j].totalAppointment++;
+                    if (appointments.get(i).done == 1) {
+                        appointmentStatistics[j].accomplishedAppointment++;
+                    }
+                }
+            }
+        }
+        for(int i = 0; i <  numOfWeeks; i++) {
+            if(appointmentStatistics[i].totalAppointment != 0) {
+                appointmentStatistics[i].rate = (float) appointmentStatistics[i].accomplishedAppointment / appointmentStatistics[i].totalAppointment;
+            }
+        }
+
+        return appointmentStatistics;
     }
 
     public long addGPS(GPSlocation gpsLocation){

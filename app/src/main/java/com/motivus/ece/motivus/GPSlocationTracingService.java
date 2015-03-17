@@ -95,16 +95,11 @@ public class GPSlocationTracingService extends Service {
      */
     private void checkAppointmentAccomplishment(double latitude, double longitude){
         ArrayList<Appointment> appointments = Database.getInstance(getApplication()).getAllAppointments();
-        for(int i = 0; i <  appointments.size(); i++) {
-            //Check the date
-            Calendar calendar = Calendar.getInstance();
-            int year = calendar.get(Calendar.YEAR);
-            int month = calendar.get(Calendar.MONTH);
-            int day = calendar.get(Calendar.DAY_OF_MONTH);
-            int hour = calendar.get(Calendar.HOUR_OF_DAY);
-            int minute = calendar.get(Calendar.MINUTE);
+        //Check the date
+        Calendar calendar = Calendar.getInstance();
+        Date currentDate = calendar.getTime();
 
-            Date currentDate = calendar.getTime();
+        for(int i = 0; i <  appointments.size(); i++) {
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
             String appointmentDate = "" + appointments.get(i).date + ' ' + appointments.get(i).time;
             Date compareDate;
@@ -126,7 +121,7 @@ public class GPSlocationTracingService extends Service {
                 //Check the location
                 if (diffDistance <= LOCATION_THRESHOLD_DISTANCE) {
                     appointments.get(i).done = 1;
-                    if(Database.getInstance(getApplication()).existAppointment(appointments.get(i).title))
+                    if(Database.getInstance(getApplication()).existAppointment(appointments.get(i).id))
                         Database.getInstance(getApplication()).updateAppointment(appointments.get(i));
                     Toast.makeText(getApplication(),
                             "\"" + appointments.get(i).title + "\" appointment DONE!", Toast.LENGTH_SHORT)

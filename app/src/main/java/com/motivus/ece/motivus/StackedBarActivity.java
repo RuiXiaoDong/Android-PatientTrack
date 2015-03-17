@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.WindowManager;
-import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.components.Legend;
@@ -14,13 +13,13 @@ import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
-
+import com.github.mikephil.charting.utils.ColorTemplate;
 import java.util.ArrayList;
 
-public class BarChartActivity extends FragmentActivity {
+public class StackedBarActivity extends FragmentActivity {
 
-    protected BarChart mChart;
-
+    private BarChart mChart;
+    private float mMaxNumAppointment;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,42 +27,44 @@ public class BarChartActivity extends FragmentActivity {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_bar_chart);
 
+        mMaxNumAppointment = 0;
         mChart = (BarChart) findViewById(R.id.chart1);
         mChart.setDescription("");
         mChart.setMaxVisibleValueCount(60);
-        mChart.setDrawBarShadow(true);
-        mChart.setDrawValueAboveBar(true);
+        mChart.setDrawBarShadow(false);
+        mChart.setDrawValueAboveBar(false);
         mChart.setPinchZoom(false);
         mChart.setDrawGridBackground(false);
-
-        XAxis xAxis = mChart.getXAxis();
-        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-        xAxis.setDrawGridLines(false);
-        xAxis.setSpaceBetweenLabels(2);
-
-        YAxis leftAxis = mChart.getAxisLeft();
-        leftAxis.setLabelCount(8);
-        leftAxis.setPosition(YAxis.YAxisLabelPosition.OUTSIDE_CHART);
-
-        YAxis rightAxis = mChart.getAxisRight();
-        rightAxis.setDrawGridLines(false);
-        rightAxis.setLabelCount(8);
+        mChart.setDrawValuesForWholeStack(true);
 
         setData(5);
 
+        XAxis xLabels = mChart.getXAxis();
+        xLabels.setPosition(XAxis.XAxisPosition.TOP);
+
+        YAxis leftAxis = mChart.getAxisLeft();
+        leftAxis.setPosition(YAxis.YAxisLabelPosition.OUTSIDE_CHART);
+        leftAxis.setStartAtZero(true);
+        leftAxis.setDrawAxisLine(true);
+        leftAxis.setDrawTopYLabelEntry(true);
+        leftAxis.setAxisMaxValue(mMaxNumAppointment + 1);
+        leftAxis.setLabelCount((int)mMaxNumAppointment + 1);
+
+        YAxis rightAxis = mChart.getAxisRight();
+        rightAxis.setEnabled(false);
+
         Legend l = mChart.getLegend();
-        l.setPosition(Legend.LegendPosition.BELOW_CHART_LEFT);
-        l.setForm(Legend.LegendForm.SQUARE);
-        l.setFormSize(9f);
-        l.setTextSize(11f);
-        l.setXEntrySpace(4f);
+        l.setPosition(Legend.LegendPosition.BELOW_CHART_RIGHT);
+        l.setFormSize(8f);
+        l.setFormToTextSpace(4f);
+        l.setXEntrySpace(6f);
     }
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_bar_chart, menu);
+        getMenuInflater().inflate(R.menu.menu_stacked_bar, menu);
         return true;
     }
 
@@ -91,19 +92,42 @@ public class BarChartActivity extends FragmentActivity {
         AppointmentStatistic[] appointmentStatistics = Database.getInstance(getApplicationContext()).getAppointmentAccomplishmentRate_Weekly(count);
         ArrayList<BarEntry> yVals = new ArrayList<BarEntry>();
         for (int i = 0; i < count; i++) {
-            float val = appointmentStatistics[i].rate * 100;
-            yVals.add(new BarEntry(val, i));
+            float val1 = appointmentStatistics[i].accomplishedAppointment;
+            float val2 = appointmentStatistics[i].totalAppointment - appointmentStatistics[i].accomplishedAppointment;
+
+            if(mMaxNumAppointment <  appointmentStatistics[i].totalAppointment)
+                mMaxNumAppointment = appointmentStatistics[i].totalAppointment;
+            BarEntry barEntry = new BarEntry(new float[] {
+                    val1, val2
+            }, i);
+            yVals.add(barEntry);
         }
 
-        BarDataSet set = new BarDataSet(yVals, "Accomplishment Rate");
-        set.setBarSpacePercent(35f);
+        BarDataSet set = new BarDataSet(yVals, "");
+        set.setColors(getColors());
+        set.setStackLabels(new String[] {
+                "Accomplished", "Unaccomplished"
+        });
 
         ArrayList<BarDataSet> dataSets = new ArrayList<BarDataSet>();
         dataSets.add(set);
 
         BarData data = new BarData(xVals, dataSets);
-        data.setValueTextSize(10f);
-
         mChart.setData(data);
+        mChart.invalidate();
+    }
+
+    private int[] getColors() {
+
+        int stackSize = 2;
+
+        // have as many colors as stack-values per entry
+        int []colors = new int[stackSize];
+
+        for(int i = 0; i < stackSize; i++) {
+            colors[i] = ColorTemplate.VORDIPLOM_COLORS[i];
+        }
+
+        return colors;
     }
 }
