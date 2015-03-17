@@ -27,11 +27,11 @@ public class GPSlocationTracingService extends Service {
     double mLastLatitude = 0;
     double mLastLongitude = 0;
 
-    private final float LOCATION_REFRESH_DISTANCE = 0;
-    private final long LOCATION_REFRESH_TIME = 5000;
+    public static float LOCATION_REFRESH_DISTANCE = 0;
+    public static long LOCATION_REFRESH_TIME = 5000;
 
-    private float LOCATION_THRESHOLD_DISTANCE = 1000; //in meter
-    private float LOCATION_THRESHOLD_TIME = 30; //in min
+    public static float APPOINTMENT_RANGE = 500; //in meter
+    public static long APPOINTMENT_REMIND_TIME = 30; //in min
 
     private boolean mRunning;
     public GPSlocationTracingService() {
@@ -61,7 +61,7 @@ public class GPSlocationTracingService extends Service {
         wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "DoNotSleep");
         wakeLock.acquire();
 
-        Toast.makeText(getApplicationContext(), "Service Created",
+        Toast.makeText(getApplicationContext(), "GPS Tracking Service Created",
                 Toast.LENGTH_SHORT).show();
     }
 
@@ -84,7 +84,7 @@ public class GPSlocationTracingService extends Service {
         mLocationManager.removeUpdates(mLocationListener);
         wakeLock.release();
 
-        Toast.makeText(getApplicationContext(), "Service Destroyed",
+        Toast.makeText(getApplicationContext(), "GPS Tracking Service Destroyed",
                 Toast.LENGTH_SHORT).show();
     }
 
@@ -116,10 +116,10 @@ public class GPSlocationTracingService extends Service {
             int diffmin = (int) (diff / (60 * 1000));
             int diffsec = (int) (diff / (1000));
 
-            if(diffmin <= LOCATION_THRESHOLD_TIME) {
+            if(diffmin <= APPOINTMENT_REMIND_TIME) {
                 double diffDistance = HelperFunctions.checkDistance(latitude, longitude, appointments.get(i).latitude, appointments.get(i).longitude);
                 //Check the location
-                if (diffDistance <= LOCATION_THRESHOLD_DISTANCE) {
+                if (diffDistance <= APPOINTMENT_RANGE) {
                     appointments.get(i).done = 1;
                     if(Database.getInstance(getApplication()).existAppointment(appointments.get(i).id))
                         Database.getInstance(getApplication()).updateAppointment(appointments.get(i));

@@ -1,5 +1,8 @@
 package com.motivus.ece.motivus;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -11,10 +14,12 @@ import java.util.Locale;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ListFragment;
 import android.support.v7.app.ActionBarActivity;
@@ -353,8 +358,8 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                     new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            Intent map = new Intent(v.getContext(), BarChartActivity.class);
-                            startActivity(map);
+                            Intent barChat = new Intent(v.getContext(), BarChartActivity.class);
+                            startActivity(barChat);
                         }
                     }
             );
@@ -365,13 +370,50 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                     new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            Intent map = new Intent(v.getContext(), StackedBarActivity.class);
-                            startActivity(map);
+                            Intent stackedBarChart = new Intent(v.getContext(), StackedBarActivity.class);
+                            startActivity(stackedBarChart);
+                        }
+                    }
+            );
+
+            //Appointment Tracking
+            Button gpsDataButton = (Button) rootView.findViewById(R.id.button_rawdata_gps);
+            gpsDataButton.setOnClickListener(
+                    new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            storeFile();
                         }
                     }
             );
 
             return rootView;
+        }
+
+        public boolean storeFile()
+        {
+            boolean created = false;
+            String fileName = "GPSRawData.txt";
+            ArrayList<GPSlocation> GPSlocations = Database.getInstance(getActivity()).getAllGPSs();
+            //File content
+            String fileContent = "";
+            for(int i = 0;i < GPSlocations.size(); i++ ){
+                GPSlocation gpsLocation = GPSlocations.get(i);
+                fileContent = fileContent + gpsLocation.time + "#" + gpsLocation.latitude + "#" + gpsLocation.longitude  + "\n";
+            }
+
+            //Create File
+            created = HelperFunctions.writeToExternalStoragePublic(fileName, fileContent);
+
+            //Return back to start page
+            if (created){
+                Toast.makeText(getActivity(), "Saved " + fileName, Toast.LENGTH_SHORT).show();
+            }
+            else {
+                Toast.makeText(getActivity(), "Failed to save " + fileName, Toast.LENGTH_SHORT).show();
+            }
+
+            return created;
         }
     }
 
@@ -556,12 +598,40 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
     }
 
     public void ApplySettings() {
-        boolean gpsSwitch = mSharedPreferences.getBoolean("gps_switch", true);
-        if(gpsSwitch) {
+        boolean gpsTrackingSwitch = mSharedPreferences.getBoolean("gps_tracking_switch", true);
+        boolean phoneUsageTrackingSwitch = mSharedPreferences.getBoolean("phone_usage_tracking_switch", true);
+        long gpsTrackingFrequency = Long.parseLong(mSharedPreferences.getString("gps_tracking_frequency", "5000"));
+        float gpsTrackingDistanceInterval = Float.parseFloat(mSharedPreferences.getString("gps_tracking_distance_interval", "0"));
+        long appointmentRemindTime = Long.parseLong(mSharedPreferences.getString("appointment_remind_time", "30"));
+        float appointmentRange = Float.parseFloat(mSharedPreferences.getString("appointment_range", "500"));
+
+        if(gpsTrackingSwitch) {
             startService(new Intent(this, GPSlocationTracingService.class));
         }
         else {
             stopService(new Intent(this, GPSlocationTracingService.class));
+        }
+        if(phoneUsageTrackingSwitch) {
+            startService(new Intent(this, PhoneUsageTracingService.class));
+        }
+        else {
+            stopService(new Intent(this, PhoneUsageTracingService.class));
+        }
+        if(gpsTrackingFrequency != GPSlocationTracingService.LOCATION_REFRESH_TIME){
+            GPSlocationTracingService.LOCATION_REFRESH_TIME = gpsTrackingFrequency;
+            if(stopService(new Intent(this, GPSlocationTracingService.class)))
+                startService(new Intent(this, GPSlocationTracingService.class));
+        }
+        if(gpsTrackingDistanceInterval != GPSlocationTracingService.LOCATION_REFRESH_DISTANCE){
+            GPSlocationTracingService.LOCATION_REFRESH_DISTANCE = gpsTrackingDistanceInterval;
+            if(stopService(new Intent(this, GPSlocationTracingService.class)))
+                startService(new Intent(this, GPSlocationTracingService.class));
+        }
+        if(appointmentRemindTime != GPSlocationTracingService.APPOINTMENT_REMIND_TIME){
+            GPSlocationTracingService.APPOINTMENT_REMIND_TIME = appointmentRemindTime;
+        }
+        if(appointmentRange != GPSlocationTracingService.APPOINTMENT_RANGE){
+            GPSlocationTracingService.APPOINTMENT_RANGE = appointmentRange;
         }
     }
 }

@@ -6,12 +6,28 @@
     <!-- Example General settings -->
     <string name="pref_header_general">General</string>
 
-    <string name="pref_gps_switch">Enable GPS Locator</string>
-    <string name="pref_gps_switch_description">Turn this On is you want to monitor in the background
+    <string name="pref_gps_tracking_switch">Enable GPS Tracking</string>
+    <string name="pref_gps_tracking_switch_description">Turn this On is you want to monitor GPS location in the background
     </string>
 
-    <string name="pref_title_display_name">Display name</string>
-    <string name="pref_default_display_name">John Smith</string>
+    <string name="pref_phone_usage_tracking_switch">Enable Phone Usage Tracking</string>
+    <string name="pref_phone_usage_tracking_switch_description">Turn this On is you want to monitor Phone Call and SMS usage in the background
+    </string>
+
+    <string name="pref_gps_tracking_frequency">GPS Refresh Rate (in millisecond)</string>
+    <string name="pref_default_gps_tracking_frequency">5000</string>
+
+    <string name="pref_gps_tracking_distance_interval">GPS Refresh Distance Interval (in meter)</string>
+    <string name="pref_default_gps_tracking_distance_interval">0</string>
+
+    <string name="pref_appointment_remind_time">Appointment Reminding Time (in minute)</string>
+    <string name="pref_default_appointment_remind_time">30</string>
+
+    <string name="pref_appointment_range">Appointment Range (in meter)</string>
+    <string name="pref_default_appointment_range">500</string>
+
+    <string name="pref_title_display_name">Patient Name</string>
+    <string name="pref_default_display_name">none</string>
 
     <string name="pref_title_add_friends_to_messages">Add friends to messages</string>
     <string-array name="pref_example_list_titles">

@@ -1,15 +1,55 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <CheckBoxPreference
-        android:key="gps_switch"
-        android:title="@string/pref_gps_switch"
-        android:summary="@string/pref_gps_switch_description"
+        android:key="gps_tracking_switch"
+        android:title="@string/pref_gps_tracking_switch"
+        android:summary="@string/pref_gps_tracking_switch_description"
         android:defaultValue="true" />
 
-    <!-- NOTE: EditTextPreference accepts EditText attributes. -->
-    <!-- NOTE: EditTextPreference's summary should be set to its value by the activity code. -->
+    <CheckBoxPreference
+        android:key="phone_usage_tracking_switch"
+        android:title="@string/pref_phone_usage_tracking_switch"
+        android:summary="@string/pref_phone_usage_tracking_switch_description"
+        android:defaultValue="true" />
+
     <EditTextPreference
-        android:key="example_text"
+        android:key="gps_tracking_frequency"
+        android:title="@string/pref_gps_tracking_frequency"
+        android:defaultValue="@string/pref_default_gps_tracking_frequency"
+        android:selectAllOnFocus="true"
+        android:inputType="number"
+        android:singleLine="true"
+        android:maxLines="1" />
+
+    <EditTextPreference
+        android:key="gps_tracking_distance_interval"
+        android:title="@string/pref_gps_tracking_distance_interval"
+        android:defaultValue="@string/pref_default_gps_tracking_distance_interval"
+        android:selectAllOnFocus="true"
+        android:inputType="number"
+        android:singleLine="true"
+        android:maxLines="1" />
+
+    <EditTextPreference
+        android:key="appointment_remind_time"
+        android:title="@string/pref_appointment_remind_time"
+        android:defaultValue="@string/pref_default_appointment_remind_time"
+        android:selectAllOnFocus="true"
+        android:inputType="number"
+        android:singleLine="true"
+        android:maxLines="1" />
+
+    <EditTextPreference
+        android:key="appointment_range"
+        android:title="@string/pref_appointment_range"
+        android:defaultValue="@string/pref_default_appointment_range"
+        android:selectAllOnFocus="true"
+        android:inputType="number"
+        android:singleLine="true"
+        android:maxLines="1" />
+
+    <EditTextPreference
+        android:key="patient_name"
         android:title="@string/pref_title_display_name"
         android:defaultValue="@string/pref_default_display_name"
         android:selectAllOnFocus="true"

@@ -8,12 +8,15 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Environment;
 
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -61,7 +64,6 @@ public class HelperFunctions {
      * Calculates the distance between two locations in KM
      */
     public static double checkDistance(double lat1, double lng1, double lat2, double lng2) {
-
         double earthRadius = 6371;
 
         double dLat = Math.toRadians(lat2-lat1);
@@ -81,7 +83,6 @@ public class HelperFunctions {
     }
 
     public static Bitmap getGoogleMapThumbnail(double latitude, double longitude){
-
         String URL = "http://maps.google.com/maps/api/staticmap?center=" +latitude + "," + longitude + "&zoom=15&size=600x600&sensor=false";
 
         Bitmap bmp = null;
@@ -105,6 +106,51 @@ public class HelperFunctions {
         }
 
         return bmp;
+    }
+
+    public static boolean isExternalStorageAvailable() {
+        String extStorageState = Environment.getExternalStorageState();
+        if (Environment.MEDIA_MOUNTED.equals(extStorageState)) {
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean isExternalStorageReadOnly() {
+        String extStorageState = Environment.getExternalStorageState();
+        if (Environment.MEDIA_MOUNTED_READ_ONLY.equals(extStorageState)) {
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean writeToExternalStoragePublic(String filename, String fileContent) {
+        boolean saved = false;
+        String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/";
+        if (isExternalStorageAvailable() && !isExternalStorageReadOnly()) {
+            try {
+                boolean exists = (new File(path)).exists();
+                if (!exists) {
+                    new File(path).mkdirs();
+                }
+
+                //Remote legacy file
+                File file = new File(path + filename);
+                file.delete();
+
+                // Open output stream
+                FileOutputStream fOut = new FileOutputStream(path + filename,true);
+                fOut.write(fileContent.getBytes());
+                // Close output stream
+                fOut.flush();
+                fOut.close();
+
+                saved = true;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return saved;
     }
 
     public static Appointment[] demoAppointments() {

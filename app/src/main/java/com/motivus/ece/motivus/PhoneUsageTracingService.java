@@ -33,7 +33,7 @@ public class PhoneUsageTracingService extends Service {
         registerReceiver(smsReceiver, smsFilter);
 
         //Outgoing SMS
-        Uri SMS_STATUS_URI = Uri.parse("content://sms");
+        Uri SMS_STATUS_URI = Uri.parse("content://sms/sent");
         this.getContentResolver().registerContentObserver(SMS_STATUS_URI, true, smsObserver);
 
         //Incoming and out going phone call
@@ -41,13 +41,20 @@ public class PhoneUsageTracingService extends Service {
         phoneFilter.addAction("android.intent.action.PHONE_STATE");
         phoneFilter.addAction("android.intent.action.NEW_OUTGOING_CALL");
         registerReceiver(phoneReceiver, phoneFilter);
+
+        Toast.makeText(getApplicationContext(), "Phone Usage Tracking Service Created",
+                Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         unregisterReceiver(smsReceiver);
+        this.getContentResolver().unregisterContentObserver(smsObserver);
         unregisterReceiver(phoneReceiver);
+
+        Toast.makeText(getApplicationContext(), "Phone Usage Tracking Service Destroyed",
+                Toast.LENGTH_SHORT).show();
     }
 
     private final BroadcastReceiver smsReceiver = new BroadcastReceiver() {
@@ -106,7 +113,7 @@ public class PhoneUsageTracingService extends Service {
         }
 
         protected void onMissedCall(Context ctx, String number, Date start) {
-            Toast.makeText(getApplicationContext(), "Misiing phone",
+            Toast.makeText(getApplicationContext(), "Missing phone",
                     Toast.LENGTH_SHORT).show();
         }
 
@@ -153,12 +160,7 @@ public class PhoneUsageTracingService extends Service {
         }
 
         public void onChange(boolean selfChange) {
-            try{
-                Toast.makeText(getApplicationContext(), "Outgoing SMS",
-                        Toast.LENGTH_SHORT).show();
-            }
-            catch(Exception sggh){
-            }
+            Toast.makeText(getApplicationContext(), "Outgoing SMS", Toast.LENGTH_SHORT).show();
             super.onChange(selfChange);
         }
     };

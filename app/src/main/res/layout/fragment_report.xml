@@ -52,5 +52,20 @@
         android:layout_below="@+id/button_tracking_accomplishment"
         android:layout_toRightOf="@+id/section_label"
         android:layout_alignRight="@+id/button_tracking_map"
-        android:layout_alignEnd="@+id/button_tracking_map"/>
+        android:layout_alignEnd="@+id/button_tracking_map"
+        android:layout_marginBottom="10dp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Output GPS Data"
+        android:id="@+id/button_rawdata_gps"
+        android:textColor="#ffffff"
+        android:background="#ff1f75ff"
+        android:textStyle="bold|normal|italic"
+        android:height="60dp"
+        android:layout_below="@+id/button_tracking_appointment"
+        android:layout_toRightOf="@+id/section_label"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 </RelativeLayout>
