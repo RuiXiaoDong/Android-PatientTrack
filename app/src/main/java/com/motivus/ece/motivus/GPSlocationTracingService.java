@@ -1,5 +1,7 @@
 package com.motivus.ece.motivus;
 
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -9,6 +11,8 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.location.LocationManager;
 import android.os.PowerManager;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
 import android.widget.Toast;
 
 import java.text.DateFormat;
@@ -26,6 +30,7 @@ public class GPSlocationTracingService extends Service {
 
     double mLastLatitude = 0;
     double mLastLongitude = 0;
+    int mNotificationId;
 
     public static float LOCATION_REFRESH_DISTANCE = 0;
     public static long LOCATION_REFRESH_TIME = 5000;
@@ -88,6 +93,28 @@ public class GPSlocationTracingService extends Service {
                 Toast.LENGTH_SHORT).show();
     }
 
+    private int sendNotification(String content) {
+        NotificationCompat.Builder mBuilder =
+                new NotificationCompat.Builder(this)
+                        .setSmallIcon(R.drawable.motivus_notification)
+                        .setContentTitle("motivus: appointment remind")
+                        .setContentText(content);
+        Intent resultIntent = new Intent(this, MainActivity.class);
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+        stackBuilder.addParentStack(MainActivity.class);
+        stackBuilder.addNextIntent(resultIntent);
+        PendingIntent resultPendingIntent =
+                stackBuilder.getPendingIntent(
+                        0,
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                );
+        mBuilder.setContentIntent(resultPendingIntent);
+        NotificationManager mNotificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        mNotificationManager.notify(mNotificationId, mBuilder.build());
+        return mNotificationId;
+    }
+
     /**
      * Compare appointment location
      * @param latitude
@@ -126,6 +153,7 @@ public class GPSlocationTracingService extends Service {
                     Toast.makeText(getApplication(),
                             "\"" + appointments.get(i).title + "\" appointment DONE!", Toast.LENGTH_SHORT)
                             .show();
+                    sendNotification("Appointment: \"" + appointments.get(i).title + "\" is coming!");
                 }
             }
         }
