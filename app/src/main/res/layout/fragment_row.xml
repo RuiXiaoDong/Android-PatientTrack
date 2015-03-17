@@ -40,6 +40,8 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:checked="false"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
         android:layout_alignBottom="@+id/text_title" />
 
 </RelativeLayout>
