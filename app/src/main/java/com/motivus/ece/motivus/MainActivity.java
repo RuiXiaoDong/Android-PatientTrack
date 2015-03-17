@@ -16,25 +16,30 @@ import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
+import android.content.ContentUris;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
-import android.support.v4.app.ListFragment;
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.ActionBar;
+import android.provider.CalendarContract;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.ListFragment;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -186,6 +191,8 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                     return AppointmentFragment.newInstance(position + 1);
                 case 1:
                     return ReportFragment.newInstance(position + 1);
+                case 2:
+                    return GoogleCalendarFragment.newInstance(position + 1);
                 default:
                     return AppointmentFragment.newInstance(position + 1);
             }
@@ -194,7 +201,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         @Override
         public int getCount() {
             // Show 2 total pages.
-            return 2;
+            return 3;
         }
 
         @Override
@@ -216,6 +223,8 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                     return getString(R.string.title_section1).toUpperCase(l);
                 case 1:
                     return getString(R.string.title_section3).toUpperCase(l);
+                case 2:
+                    return getString(R.string.title_section2).toUpperCase(l);
             }
             return null;
         }
@@ -433,6 +442,67 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             return created;
         }
     }
+    //*****
+    public static class GoogleCalendarFragment extends Fragment {
+        /**
+         * The fragment argument representing the section number for this
+         * fragment.
+         */
+
+        private static final String ARG_SECTION_NUMBER = "section_number";
+        private WebView webView;
+        /**
+         * Returns a new instance of this fragment for the given section
+         * number.
+         */
+        public static GoogleCalendarFragment newInstance(int sectionNumber) {
+            GoogleCalendarFragment fragment = new GoogleCalendarFragment();
+            Bundle args = new Bundle();
+            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
+            fragment.setArguments(args);
+
+            return fragment;
+        }
+
+        public GoogleCalendarFragment() {
+        }
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                                 Bundle savedInstanceState) {
+
+           // super.onCreate(savedInstanceState);
+            View rootView = inflater.inflate(R.layout.fragment_cal, container, false);
+
+
+
+            //see map
+            Button mapTrackButton = (Button) rootView.findViewById(R.id.button_calendar);
+            mapTrackButton.setOnClickListener(
+                    new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent calendar = new Intent(v.getContext(), Calendar.class);
+                            startActivity(calendar);
+                        }
+                    }
+            );
+
+            return rootView;
+        }
+
+
+
+        }
+
+
+
+
+    //***
+
+
+
+
 
     public static class DetailFragment extends Fragment {
         public DetailFragment() {
@@ -552,7 +622,13 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             deleteAppointment.setOnClickListener(
                     new View.OnClickListener() {
                         @Override
-                        public void onClick(View v) {
+                        public void onClick(View v)
+                        {
+                            /*
+                            long eventID= 8;
+                            Uri deleteUri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, eventID);
+                            int rows = getActivity().getContentResolver().delete(deleteUri, null, null);
+                            Toast.makeText(getActivity(), "deleted google!", Toast.LENGTH_SHORT).show();*/
                             getActivity().getSupportFragmentManager().popBackStack();
                             Database.getInstance(getActivity()).deleteAppointment(appointment.id);
                         }

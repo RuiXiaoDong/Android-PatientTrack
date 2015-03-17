@@ -82,6 +82,11 @@
             android:name=".CombinedChartActivity"
             android:label="@string/title_activity_combined_chart" >
         </activity>
+        <activity
+            android:name=".Calendar"
+            android:label="Calendar"
+             >
+        </activity>
     </application>
 
 </manifest>
