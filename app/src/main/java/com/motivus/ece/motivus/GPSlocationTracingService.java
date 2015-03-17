@@ -143,13 +143,16 @@ public class GPSlocationTracingService extends Service {
             int diffmin = (int) (diff / (60 * 1000));
             int diffsec = (int) (diff / (1000));
 
-            if(diffmin <= APPOINTMENT_REMIND_TIME) {
+            if(Math.abs(diffmin) <= APPOINTMENT_REMIND_TIME) {
                 double diffDistance = HelperFunctions.checkDistance(latitude, longitude, appointments.get(i).latitude, appointments.get(i).longitude);
                 //Check the location
                 if (diffDistance <= APPOINTMENT_RANGE) {
-                    appointments.get(i).done = 1;
-                    if(Database.getInstance(getApplication()).existAppointment(appointments.get(i).id))
-                        Database.getInstance(getApplication()).updateAppointment(appointments.get(i));
+                    if(appointments.get(i).done == 0) {
+                        appointments.get(i).done = 1;
+                        appointments.get(i).score = PointSystem.appointmentPoint(true, diffmin > 0);
+                        if (Database.getInstance(getApplication()).existAppointment(appointments.get(i).id))
+                            Database.getInstance(getApplication()).updateAppointment(appointments.get(i));
+                    }
                     Toast.makeText(getApplication(),
                             "\"" + appointments.get(i).title + "\" appointment DONE!", Toast.LENGTH_SHORT)
                             .show();

@@ -88,7 +88,7 @@ public class BarChartActivity extends FragmentActivity {
             xVals.add("Week" + (i + 1));
         }
 
-        AppointmentStatistic[] appointmentStatistics = Database.getInstance(getApplicationContext()).getAppointmentAccomplishmentRate_Weekly(count);
+        AppointmentStatistic[] appointmentStatistics = Database.getInstance(getApplicationContext()).getAppointmentStatistics_Weekly(count);
         ArrayList<BarEntry> yVals = new ArrayList<BarEntry>();
         for (int i = 0; i < count; i++) {
             float val = appointmentStatistics[i].rate * 100;

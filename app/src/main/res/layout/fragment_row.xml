@@ -16,10 +16,10 @@
         android:id="@+id/text_date"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
+        android:textSize="20dp"
         android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:textSize="20dp" />
+        android:layout_toRightOf="@+id/checkBox_done"
+        android:layout_toEndOf="@+id/checkBox_done" />
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -28,8 +28,18 @@
         android:layout_alignRight="@+id/text_date"
         android:layout_alignEnd="@+id/text_date"
         android:layout_below="@+id/text_date"
+        android:textSize="25dp"
+        android:layout_toRightOf="@+id/checkBox_done"
+        android:layout_toEndOf="@+id/checkBox_done" />
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/checkBox_done"
+        android:layout_alignTop="@+id/text_date"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:textSize="25dp" />
+        android:checked="false"
+        android:layout_alignBottom="@+id/text_title" />
 
 </RelativeLayout>

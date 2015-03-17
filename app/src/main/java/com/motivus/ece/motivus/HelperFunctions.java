@@ -165,6 +165,7 @@ public class HelperFunctions {
         appointment0.latitude = 43.659389479900085;
         appointment0.longitude = -79.37318980693817;
         appointment0.done = 1;
+        appointment0.score = 100;
         appointment0.pic = null;
         appointments[0] = appointment0;
 
@@ -177,6 +178,7 @@ public class HelperFunctions {
         appointment1.latitude = 43.65769058142255;
         appointment1.longitude = -79.37882781028748;
         appointment1.done = 1;
+        appointment1.score = 50;
         appointment1.pic = null;
         appointments[1] = appointment1;
 
@@ -189,6 +191,7 @@ public class HelperFunctions {
         appointment2.latitude = 43.657193807051044;
         appointment2.longitude = -79.3880546092987;
         appointment2.done = 0;
+        appointment2.score = 0;
         appointment2.pic = null;
         appointments[2] = appointment2;
 
@@ -201,6 +204,7 @@ public class HelperFunctions {
         appointment3.latitude = 43.658574480347106;
         appointment3.longitude = -79.39919650554657;
         appointment3.done = 1;
+        appointment3.score = 100;
         appointment3.pic = null;
         appointments[3] = appointment3;
 
@@ -213,6 +217,7 @@ public class HelperFunctions {
         appointment4.latitude = 43.65751981569591;
         appointment4.longitude = -79.39038276672363;
         appointment4.done = 1;
+        appointment4.score = 100;
         appointment4.pic = null;
         appointments[4] = appointment4;
 
@@ -225,6 +230,7 @@ public class HelperFunctions {
         appointment5.latitude = 43.653283505911965;
         appointment5.longitude = -79.37755107879639;
         appointment5.done = 1;
+        appointment5.score = 50;
         appointment5.pic = null;
         appointments[5] = appointment5;
 
@@ -237,6 +243,7 @@ public class HelperFunctions {
         appointment6.latitude = 43.65350085935817;
         appointment6.longitude = -79.40527439117432;
         appointment6.done = 0;
+        appointment6.score = 0;
         appointment6.pic = null;
         appointments[6] = appointment6;
 
@@ -249,6 +256,7 @@ public class HelperFunctions {
         appointment7.latitude = 43.658574480347106;
         appointment7.longitude = -79.39919650554657;
         appointment7.done = 1;
+        appointment7.score = 100;
         appointment7.pic = null;
         appointments[7] = appointment7;
 
@@ -261,6 +269,7 @@ public class HelperFunctions {
         appointment8.latitude = 43.65751981569591;
         appointment8.longitude = -79.39038276672363;
         appointment8.done = 1;
+        appointment8.score = 100;
         appointment8.pic = null;
         appointments[8] = appointment8;
 
@@ -273,6 +282,7 @@ public class HelperFunctions {
         appointment9.latitude = 43.653283505911965;
         appointment9.longitude = -79.37755107879639;
         appointment9.done = 1;
+        appointment9.score = 50;
         appointment9.pic = null;
         appointments[9] = appointment9;
 
@@ -285,6 +295,7 @@ public class HelperFunctions {
         appointment10.latitude = 43.65350085935817;
         appointment10.longitude = -79.40527439117432;
         appointment10.done = 0;
+        appointment10.score = 0;
         appointment10.pic = null;
         appointments[10] = appointment10;
 
@@ -297,6 +308,7 @@ public class HelperFunctions {
         appointment11.latitude = 43.659389479900085;
         appointment11.longitude = -79.37318980693817;
         appointment11.done = 0;
+        appointment11.score = 0;
         appointment11.pic = null;
         appointments[11] = appointment11;
 
@@ -309,6 +321,7 @@ public class HelperFunctions {
         appointment12.latitude = 43.65350085935817;
         appointment12.longitude = -79.40527439117432;
         appointment12.done = 1;
+        appointment12.score = 100;
         appointment12.pic = null;
         appointments[12] = appointment12;
 
@@ -321,6 +334,7 @@ public class HelperFunctions {
         appointment13.latitude = 43.659389479900085;
         appointment13.longitude = -79.37318980693817;
         appointment13.done = 0;
+        appointment13.score = 0;
         appointment13.pic = null;
         appointments[13] = appointment13;
 
@@ -333,6 +347,7 @@ public class HelperFunctions {
         appointment14.latitude = 43.659389479900085;
         appointment14.longitude = -79.37318980693817;
         appointment14.done = 1;
+        appointment14.score = 50;
         appointment14.pic = null;
         appointments[14] = appointment14;
 

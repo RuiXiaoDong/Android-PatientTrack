@@ -78,6 +78,10 @@
             android:name=".StackedBarActivity"
             android:label="@string/title_activity_stacked_bar" >
         </activity>
+        <activity
+            android:name=".CombinedChartActivity"
+            android:label="@string/title_activity_combined_chart" >
+        </activity>
     </application>
 
 </manifest>

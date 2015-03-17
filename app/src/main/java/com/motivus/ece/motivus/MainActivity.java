@@ -43,6 +43,8 @@ import android.widget.ListView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.github.mikephil.charting.charts.CombinedChart;
+
 public class MainActivity extends ActionBarActivity implements ActionBar.TabListener {
     /**
      * The refresh distance is set to 0 meter, which means the update does not depend on distance
@@ -259,6 +261,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
             //Get all the appointment and put them into
             appointmentList = Database.getInstance(getActivity()).getAllAppointments();
+            Collections.sort(appointmentList);
             mAdapter = new AppointmentAdapter(getActivity(), appointmentList);
             setListAdapter(mAdapter);
 
@@ -354,7 +357,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                     }
             );
 
-            //Appointment Tracking
+            //Accomplishment Tracking
             Button accomplishmentTrackButton = (Button) rootView.findViewById(R.id.button_tracking_accomplishment);
             accomplishmentTrackButton.setOnClickListener(
                     new View.OnClickListener() {
@@ -378,7 +381,19 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                     }
             );
 
-            //Appointment Tracking
+            //Score Tracking
+            Button scoreTrackButton = (Button) rootView.findViewById(R.id.button_scores);
+            scoreTrackButton.setOnClickListener(
+                    new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent combinedChart = new Intent(v.getContext(), CombinedChartActivity.class);
+                            startActivity(combinedChart);
+                        }
+                    }
+            );
+
+            //GPS raw date
             Button gpsDataButton = (Button) rootView.findViewById(R.id.button_rawdata_gps);
             gpsDataButton.setOnClickListener(
                     new View.OnClickListener() {

@@ -36,6 +36,7 @@ public class Database extends SQLiteOpenHelper {
     public static final String APPOINTMENT_COLUMN_NAME_LATITUDE = "latitude";
     public static final String APPOINTMENT_COLUMN_NAME_LONGITUDE = "longitude";
     public static final String APPOINTMENT_COLUMN_NAME_DONE = "done";
+    public static final String APPOINTMENT_COLUMN_NAME_SCORE = "score";
     public static final String APPOINTMENT_COLUMN_NAME_PIC = "pic";
 
     public static final String APPOINTMENT_SQL_CREATE_ENTRIES =
@@ -48,6 +49,7 @@ public class Database extends SQLiteOpenHelper {
                     APPOINTMENT_COLUMN_NAME_LATITUDE + " TEXT," +
                     APPOINTMENT_COLUMN_NAME_LONGITUDE + " TEXT," +
                     APPOINTMENT_COLUMN_NAME_DONE + " INTEGER," +
+                    APPOINTMENT_COLUMN_NAME_SCORE + " INTEGER," +
                     APPOINTMENT_COLUMN_NAME_PIC + " BLOB" +
                     " )";
     public static final String APPOINTMENT_SQL_DELETE_ENTRIES =
@@ -147,6 +149,7 @@ public class Database extends SQLiteOpenHelper {
         values.put(APPOINTMENT_COLUMN_NAME_LATITUDE, "" + appointment.latitude);
         values.put(APPOINTMENT_COLUMN_NAME_LONGITUDE, "" + appointment.longitude);
         values.put(APPOINTMENT_COLUMN_NAME_DONE, appointment.done);
+        values.put(APPOINTMENT_COLUMN_NAME_SCORE, appointment.score);
         values.put(APPOINTMENT_COLUMN_NAME_PIC, appointment.pic);
 
         if(existAppointment(appointment.id)) {
@@ -188,6 +191,7 @@ public class Database extends SQLiteOpenHelper {
         values.put(APPOINTMENT_COLUMN_NAME_LATITUDE, appointment.latitude);
         values.put(APPOINTMENT_COLUMN_NAME_LONGITUDE, appointment.longitude);
         values.put(APPOINTMENT_COLUMN_NAME_DONE, appointment.done);
+        values.put(APPOINTMENT_COLUMN_NAME_SCORE, appointment.score);
         values.put(APPOINTMENT_COLUMN_NAME_PIC, appointment.pic);
 
         //Updating row
@@ -214,7 +218,8 @@ public class Database extends SQLiteOpenHelper {
                 appointment.latitude = Double.parseDouble(cursor.getString(5));
                 appointment.longitude = Double.parseDouble(cursor.getString(6));
                 appointment.done = cursor.getInt(7);
-                appointment.pic = cursor.getBlob(8);
+                appointment.score = cursor.getInt(8);
+                appointment.pic = cursor.getBlob(9);
 
                 cursor.close();
                 return appointment;
@@ -246,7 +251,8 @@ public class Database extends SQLiteOpenHelper {
                 appointment.latitude = Double.parseDouble(cursor.getString(5));
                 appointment.longitude = Double.parseDouble(cursor.getString(6));
                 appointment.done = cursor.getInt(7);
-                appointment.pic = cursor.getBlob(8);
+                appointment.score = cursor.getInt(8);
+                appointment.pic = cursor.getBlob(9);
 
                 appointments.add(appointment);
             } while (cursor.moveToNext());
@@ -264,7 +270,7 @@ public class Database extends SQLiteOpenHelper {
                 new String[] { "" + id }); //selections args
     }
 
-    public AppointmentStatistic[] getAppointmentAccomplishmentRate_Weekly(int numOfWeeks) {
+    public AppointmentStatistic[] getAppointmentStatistics_Weekly(int numOfWeeks) {
         //Initialize all the accomplishment rate
         AppointmentStatistic[] appointmentStatistics = new AppointmentStatistic[numOfWeeks];
         for(int i = 0; i <  numOfWeeks; i++) {
@@ -272,6 +278,8 @@ public class Database extends SQLiteOpenHelper {
             appointmentStatistic.rate = 0.0f;
             appointmentStatistic.accomplishedAppointment = 0;
             appointmentStatistic.totalAppointment = 0;
+            appointmentStatistic.currentScore = 0;
+            appointmentStatistic.totalScore = 0;
             appointmentStatistics[i] = appointmentStatistic;
         }
         //Get all the appointments
@@ -300,6 +308,8 @@ public class Database extends SQLiteOpenHelper {
             for(int j = 0; j <  numOfWeeks; j++) {
                 if(diffDays >= j*7 && diffDays < (j+1)*7) {
                     appointmentStatistics[j].totalAppointment++;
+                    appointmentStatistics[j].totalScore = appointmentStatistics[j].totalScore + 100;
+                    appointmentStatistics[j].currentScore = appointmentStatistics[j].currentScore + appointments.get(i).score;
                     if (appointments.get(i).done == 1) {
                         appointmentStatistics[j].accomplishedAppointment++;
                     }

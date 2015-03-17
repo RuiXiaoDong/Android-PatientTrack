@@ -1,8 +1,5 @@
 package com.motivus.ece.motivus;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -11,6 +8,8 @@ class AppointmentStatistic{
     public float rate;
     public int accomplishedAppointment;
     public int totalAppointment;
+    public int currentScore;
+    public int totalScore;
 }
 /**
  * Created by dongx on 2015-02-18.
@@ -24,6 +23,7 @@ public class Appointment implements Comparable<Appointment> {
     public double latitude;
     public double longitude;
     public int done = 0;
+    public int score = 0;
     public byte[] pic;
 
     public Appointment() {

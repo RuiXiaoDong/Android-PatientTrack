@@ -28,7 +28,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Accomplishment Rate Tacking"
+        android:text="Accomplishment Rate"
         android:id="@+id/button_tracking_accomplishment"
         android:textColor="#ffffff"
         android:background="#ff1f75ff"
@@ -43,7 +43,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Appointment Tacking"
+        android:text="Appointment Numbers"
         android:id="@+id/button_tracking_appointment"
         android:textColor="#ffffff"
         android:background="#ff1f75ff"
@@ -64,8 +64,25 @@
         android:background="#ff1f75ff"
         android:textStyle="bold|normal|italic"
         android:height="60dp"
+        android:layout_below="@+id/button_scores"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignRight="@+id/button_tracking_appointment"
+        android:layout_alignEnd="@+id/button_tracking_appointment" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Patient Scores"
+        android:id="@+id/button_scores"
+        android:textColor="#ffffff"
+        android:background="#ff1f75ff"
+        android:textStyle="bold|normal|italic"
+        android:height="60dp"
         android:layout_below="@+id/button_tracking_appointment"
+        android:layout_alignRight="@+id/button_rawdata_gps"
+        android:layout_alignEnd="@+id/button_rawdata_gps"
         android:layout_toRightOf="@+id/section_label"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_toEndOf="@+id/section_label"
+        android:layout_marginBottom="10dp" />
 </RelativeLayout>
