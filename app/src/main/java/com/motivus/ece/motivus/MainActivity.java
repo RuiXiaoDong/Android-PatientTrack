@@ -7,6 +7,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -246,6 +247,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
         public void update() {
             appointmentList = Database.getInstance(getActivity()).getAllAppointments();
+            Collections.sort(appointmentList);
             mAdapter = new AppointmentAdapter(getActivity(), appointmentList);
             setListAdapter(mAdapter);
         }
