@@ -143,20 +143,24 @@ public class GPSlocationTracingService extends Service {
             int diffmin = (int) (diff / (60 * 1000));
             int diffsec = (int) (diff / (1000));
 
-            if(Math.abs(diffmin) <= APPOINTMENT_REMIND_TIME) {
+            //Before the appointment time
+            if(diffmin < 0 && diffmin >= -APPOINTMENT_REMIND_TIME) {
+                //Send notification to user
+                sendNotification("Appointment: \"" + appointments.get(i).title + "\" is coming!");
+            }
+            else if (diffmin <= APPOINTMENT_REMIND_TIME * 2 && diffmin >= 0 ) {
                 double diffDistance = HelperFunctions.checkDistance(latitude, longitude, appointments.get(i).latitude, appointments.get(i).longitude);
                 //Check the location
                 if (diffDistance <= APPOINTMENT_RANGE) {
                     if(appointments.get(i).done == 0) {
                         appointments.get(i).done = 1;
-                        appointments.get(i).score = PointSystem.appointmentPoint(true, diffmin > 0);
+                        appointments.get(i).score = PointSystem.appointmentPoint(true, diffmin > APPOINTMENT_REMIND_TIME);
                         if (Database.getInstance(getApplication()).existAppointment(appointments.get(i).id))
                             Database.getInstance(getApplication()).updateAppointment(appointments.get(i));
+                        Toast.makeText(getApplication(),
+                                "\"" + appointments.get(i).title + "\" appointment DONE!", Toast.LENGTH_SHORT)
+                                .show();
                     }
-                    Toast.makeText(getApplication(),
-                            "\"" + appointments.get(i).title + "\" appointment DONE!", Toast.LENGTH_SHORT)
-                            .show();
-                    sendNotification("Appointment: \"" + appointments.get(i).title + "\" is coming!");
                 }
             }
         }
