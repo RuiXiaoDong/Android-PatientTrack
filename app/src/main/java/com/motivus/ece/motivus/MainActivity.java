@@ -40,11 +40,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.CheckBox;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
@@ -522,6 +524,15 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             editText_date.setText("" + appointment.date, EditText.BufferType.EDITABLE);
             editText_date.setEnabled(false);
 
+            //Category
+            ArrayAdapter<String> adapterCategory = new ArrayAdapter<String>(getActivity(),
+                    R.layout.spinner_item, Database.AppointmentCategory.subList(1,Database.AppointmentCategory.size()));
+            adapterCategory.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            final Spinner spinner_category = (Spinner)(rootView.findViewById(R.id.spinner_category));
+            spinner_category.setAdapter(adapterCategory);
+            spinner_category.setSelection(appointment.category);
+            spinner_category.setEnabled(false);
+
             CheckBox checkBox_done = (CheckBox)(rootView.findViewById(R.id.checkBox_done));
             if(appointment.done == 1)
                 checkBox_done.setChecked(true);
@@ -631,6 +642,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                             //appointment.longitude = editText_longitude.getText().toString();
                             editText_time.setEnabled(true);
                             editText_date.setEnabled(true);
+                            spinner_category.setEnabled(true);
                             //appointment.latitude = editText_latitude.getT;
                             //appointment.longitude = editText_longitude.getText();
                         }
@@ -645,6 +657,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                             appointment.detail = editText_detail.getText().toString();
                             appointment.time = editText_time.getText().toString();
                             appointment.date = editText_date.getText().toString();
+                            appointment.category = Database.AppointmentCategory.indexOf(spinner_category.getSelectedItem().toString());
                             Database.getInstance(getActivity()).updateAppointment(appointment);
                             Toast.makeText(getActivity(), "Saved!", Toast.LENGTH_SHORT).show();
                             getActivity().getSupportFragmentManager().popBackStack();
