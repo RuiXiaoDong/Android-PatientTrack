@@ -5,7 +5,11 @@ import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 
 import com.github.mikephil.charting.charts.CombinedChart;
 import com.github.mikephil.charting.components.XAxis;
@@ -31,11 +35,29 @@ public class CombinedChartActivity extends FragmentActivity {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_combined_chart);
 
+        //Category
+        ArrayAdapter<String> adapterCategory = new ArrayAdapter<String>(this,
+                R.layout.spinner_item, Database.AppointmentCategory);
+        adapterCategory.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        final Spinner spinCategory = (Spinner)findViewById(R.id.spinner_category);
+        spinCategory.setAdapter(adapterCategory);
+        spinCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                int categoryIndex = Database.AppointmentCategory.indexOf(spinCategory.getSelectedItem().toString());
+                setData(5, categoryIndex);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+                // your code here
+            }
+        });
+
         mChart = (CombinedChart) findViewById(R.id.chart1);
         mChart.setDescription("");
         mChart.setDrawGridBackground(false);
         mChart.setDrawBarShadow(false);
-
         // draw bars behind lines
         mChart.setDrawOrder(new CombinedChart.DrawOrder[]{
                 CombinedChart.DrawOrder.BAR, CombinedChart.DrawOrder.LINE
@@ -50,18 +72,8 @@ public class CombinedChartActivity extends FragmentActivity {
         XAxis xAxis = mChart.getXAxis();
         xAxis.setPosition(XAxis.XAxisPosition.BOTH_SIDED);
 
-        appointmentStatistics = Database.getInstance(getApplicationContext()).getAppointmentStatistics_Weekly(5);
-        ArrayList<String> xVals = new ArrayList<String>();
-        for (int i = 0; i < appointmentStatistics.length; i++) {
-            xVals.add("Week" + (i + 1));
-        }
-        CombinedData data = new CombinedData(xVals);
-
-        data.setData(generateLineData());
-        data.setData(generateBarData());
-
-        mChart.setData(data);
-        mChart.invalidate();
+        int categoryIndex = Database.AppointmentCategory.indexOf(spinCategory.getSelectedItem().toString());
+        setData(5, categoryIndex);
     }
 
 
@@ -87,6 +99,20 @@ public class CombinedChartActivity extends FragmentActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    private void setData(int count, int category) {
+        appointmentStatistics = Database.getInstance(getApplicationContext()).getAppointmentStatistics_Weekly(count, category);
+        ArrayList<String> xVals = new ArrayList<String>();
+        for (int i = 0; i < appointmentStatistics.length; i++) {
+            xVals.add("Week" + (i + 1));
+        }
+        CombinedData data = new CombinedData(xVals);
+
+        data.setData(generateLineData());
+        data.setData(generateBarData());
+
+        mChart.setData(data);
+        mChart.invalidate();
+    }
 
     private LineData generateLineData() {
 

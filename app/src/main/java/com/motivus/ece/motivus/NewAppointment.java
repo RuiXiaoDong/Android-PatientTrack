@@ -10,9 +10,11 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TimePicker;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -24,8 +26,8 @@ public class NewAppointment extends ActionBarActivity {
     private EditText titleAppointment;
     private EditText detailAppointment;
     private final int GPSActivityIndex = 0;
-    private double latitude;
-    private double longitude;
+    private double latitude = 0.0;
+    private double longitude = 0.0;
     DatePickerDialog mDatePicker;
     TimePickerDialog mTimePicker;
     
@@ -41,9 +43,16 @@ public class NewAppointment extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_appointment);
 
+        //Category
+        ArrayAdapter<String> adapterCategory = new ArrayAdapter<String>(this,
+                R.layout.spinner_item, Database.AppointmentCategory.subList(1,Database.AppointmentCategory.size()));
+        adapterCategory.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        Spinner spinCategory = (Spinner)findViewById(R.id.spinner_category);
+        spinCategory.setAdapter(adapterCategory);
+
         titleAppointment = (EditText) findViewById(R.id.editText_title);
         detailAppointment = (EditText) findViewById(R.id.editText_detail);
-        //Add map button
+        //Map button
         Button mapLocation = (Button) findViewById(R.id.button_location);
         mapLocation.setOnClickListener(
                 new View.OnClickListener() {
@@ -55,11 +64,10 @@ public class NewAppointment extends ActionBarActivity {
                 }
         );
 
-        //Add time button
         final EditText dateAppointment = (EditText) findViewById(R.id.editText_date);
         //final EditText enddateAppointment = (EditText) findViewById(R.id.editText_enddate);
         final EditText timeAppointment = (EditText) findViewById(R.id.editText_time);
-        //Add map button
+        //Time and Date picker button
         Button timePicker = (Button) findViewById(R.id.button_timePicker);
         timePicker.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -118,12 +126,15 @@ public class NewAppointment extends ActionBarActivity {
                         appointment.longitude = longitude;
                         appointment.done = 0;
                         appointment.score = 0;
+                        Spinner spinner = (Spinner)findViewById(R.id.spinner_category);
+                        appointment.category = Database.AppointmentCategory.indexOf(spinner.getSelectedItem().toString());
 
                         Database.getInstance(getApplication()).addAppointment(appointment);
                         Calendar beginTime = Calendar.getInstance();
 
                         beginTime.set(year2, month2, day2, hour2, minute2);
 
+                        //Sync with google
                         Intent intent = new Intent(Intent.ACTION_INSERT)
                                 .setData(CalendarContract.Events.CONTENT_URI)
                                 .putExtra(CalendarContract.Events._ID, 8)
@@ -176,10 +187,7 @@ public class NewAppointment extends ActionBarActivity {
                     Bundle bundle = data.getExtras();
                     latitude = bundle.getDouble("latitude");
                     longitude = bundle.getDouble("longitude");
-                  //  latLng = new LatLng(latitude,
-                           // longitude);
                     loc= latitude + "," + longitude;
-                    //latLng.toString();
 
                     //Update your TextView.
                     EditText location = (EditText) findViewById(R.id.editText_location);

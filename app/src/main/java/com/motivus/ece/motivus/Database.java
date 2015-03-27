@@ -12,6 +12,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
@@ -23,6 +24,15 @@ public class Database extends SQLiteOpenHelper {
     //Singleton
     private static Database mInstance = null;
 
+    public static ArrayList<String> AppointmentCategory = new ArrayList<String>(Arrays.asList(
+            "All",
+            "Work/School",
+            "Social",
+            "Solo Recreation",
+            "Group Recreation",
+            "Health/Fitness",
+            "Personal Care"
+    ));
     public static final String DATABASE_NAME = "Appointments.db";
     public static final int DATABASE_VERSION = 1;
 
@@ -38,6 +48,7 @@ public class Database extends SQLiteOpenHelper {
     public static final String APPOINTMENT_COLUMN_NAME_DONE = "done";
     public static final String APPOINTMENT_COLUMN_NAME_SCORE = "score";
     public static final String APPOINTMENT_COLUMN_NAME_PIC = "pic";
+    public static final String APPOINTMENT_COLUMN_NAME_CATEGORY = "category";
 
     public static final String APPOINTMENT_SQL_CREATE_ENTRIES =
             "CREATE TABLE " + APPOINTMENT_TABLE_NAME + " (" +
@@ -50,7 +61,8 @@ public class Database extends SQLiteOpenHelper {
                     APPOINTMENT_COLUMN_NAME_LONGITUDE + " TEXT," +
                     APPOINTMENT_COLUMN_NAME_DONE + " INTEGER," +
                     APPOINTMENT_COLUMN_NAME_SCORE + " INTEGER," +
-                    APPOINTMENT_COLUMN_NAME_PIC + " BLOB" +
+                    APPOINTMENT_COLUMN_NAME_PIC + " BLOB," +
+                    APPOINTMENT_COLUMN_NAME_CATEGORY + " INTEGER" +
                     " )";
     public static final String APPOINTMENT_SQL_DELETE_ENTRIES =
             "DROP TABLE IF EXISTS " + APPOINTMENT_TABLE_NAME;
@@ -80,7 +92,6 @@ public class Database extends SQLiteOpenHelper {
             SMS_COLUMN_NAME_TIME};
 
     private int maxID;
-
     public static Database getInstance(Context ctx) {
         if (mInstance == null) {
             mInstance = new Database(ctx.getApplicationContext());
@@ -151,6 +162,7 @@ public class Database extends SQLiteOpenHelper {
         values.put(APPOINTMENT_COLUMN_NAME_DONE, appointment.done);
         values.put(APPOINTMENT_COLUMN_NAME_SCORE, appointment.score);
         values.put(APPOINTMENT_COLUMN_NAME_PIC, appointment.pic);
+        values.put(APPOINTMENT_COLUMN_NAME_CATEGORY, appointment.category);
 
         if(existAppointment(appointment.id)) {
             updateAppointment(appointment);
@@ -193,6 +205,7 @@ public class Database extends SQLiteOpenHelper {
         values.put(APPOINTMENT_COLUMN_NAME_DONE, appointment.done);
         values.put(APPOINTMENT_COLUMN_NAME_SCORE, appointment.score);
         values.put(APPOINTMENT_COLUMN_NAME_PIC, appointment.pic);
+        values.put(APPOINTMENT_COLUMN_NAME_CATEGORY, appointment.category);
 
         //Updating row
         return db.update(APPOINTMENT_TABLE_NAME, values, APPOINTMENT_COLUMN_NAME_ID + " = ?",
@@ -220,6 +233,7 @@ public class Database extends SQLiteOpenHelper {
                 appointment.done = cursor.getInt(7);
                 appointment.score = cursor.getInt(8);
                 appointment.pic = cursor.getBlob(9);
+                appointment.category = cursor.getInt(10);
 
                 cursor.close();
                 return appointment;
@@ -253,6 +267,7 @@ public class Database extends SQLiteOpenHelper {
                 appointment.done = cursor.getInt(7);
                 appointment.score = cursor.getInt(8);
                 appointment.pic = cursor.getBlob(9);
+                appointment.category = cursor.getInt(10);
 
                 appointments.add(appointment);
             } while (cursor.moveToNext());
@@ -270,7 +285,7 @@ public class Database extends SQLiteOpenHelper {
                 new String[] { "" + id }); //selections args
     }
 
-    public AppointmentStatistic[] getAppointmentStatistics_Weekly(int numOfWeeks) {
+    public AppointmentStatistic[] getAppointmentStatistics_Weekly(int numOfWeeks, int category) {
         //Initialize all the accomplishment rate
         AppointmentStatistic[] appointmentStatistics = new AppointmentStatistic[numOfWeeks];
         for(int i = 0; i <  numOfWeeks; i++) {
@@ -284,6 +299,13 @@ public class Database extends SQLiteOpenHelper {
         }
         //Get all the appointments
         ArrayList<Appointment> appointments = getAllAppointments();
+        if(category != 0) {
+            for(int i = appointments.size() - 1; i >= 0; i--) {
+                if(appointments.get(i).category != category)
+                    appointments.remove(i);
+            }
+        }
+
         //Check the date
         Calendar calendar = Calendar.getInstance();
         Date currentDate = calendar.getTime();
@@ -317,9 +339,8 @@ public class Database extends SQLiteOpenHelper {
             }
         }
         for(int i = 0; i <  numOfWeeks; i++) {
-            if(appointmentStatistics[i].totalAppointment != 0) {
+            if(appointmentStatistics[i].totalAppointment != 0)
                 appointmentStatistics[i].rate = (float) appointmentStatistics[i].accomplishedAppointment / appointmentStatistics[i].totalAppointment;
-            }
         }
 
         return appointmentStatistics;

@@ -4,7 +4,11 @@ import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.components.Legend;
@@ -27,6 +31,25 @@ public class StackedBarActivity extends FragmentActivity {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_bar_chart);
 
+        //Category
+        ArrayAdapter<String> adapterCategory = new ArrayAdapter<String>(this,
+                R.layout.spinner_item, Database.AppointmentCategory);
+        adapterCategory.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        final Spinner spinCategory = (Spinner)findViewById(R.id.spinner_category);
+        spinCategory.setAdapter(adapterCategory);
+        spinCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                int categoryIndex = Database.AppointmentCategory.indexOf(spinCategory.getSelectedItem().toString());
+                setData(5, categoryIndex);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+                // your code here
+            }
+        });
+
         mMaxNumAppointment = 0;
         mChart = (BarChart) findViewById(R.id.chart1);
         mChart.setDescription("");
@@ -37,7 +60,8 @@ public class StackedBarActivity extends FragmentActivity {
         mChart.setDrawGridBackground(false);
         mChart.setDrawValuesForWholeStack(true);
 
-        setData(5);
+        int categoryIndex = Database.AppointmentCategory.indexOf(spinCategory.getSelectedItem().toString());
+        setData(5, categoryIndex);
 
         XAxis xLabels = mChart.getXAxis();
         xLabels.setPosition(XAxis.XAxisPosition.TOP);
@@ -83,13 +107,13 @@ public class StackedBarActivity extends FragmentActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void setData(int count) {
+    private void setData(int count, int category) {
         ArrayList<String> xVals = new ArrayList<String>();
         for (int i = 0; i < count; i++) {
             xVals.add("Week" + (i + 1));
         }
 
-        AppointmentStatistic[] appointmentStatistics = Database.getInstance(getApplicationContext()).getAppointmentStatistics_Weekly(count);
+        AppointmentStatistic[] appointmentStatistics = Database.getInstance(getApplicationContext()).getAppointmentStatistics_Weekly(count, category);
         ArrayList<BarEntry> yVals = new ArrayList<BarEntry>();
         for (int i = 0; i < count; i++) {
             float val1 = appointmentStatistics[i].accomplishedAppointment;
@@ -113,6 +137,7 @@ public class StackedBarActivity extends FragmentActivity {
         dataSets.add(set);
 
         BarData data = new BarData(xVals, dataSets);
+
         mChart.setData(data);
         mChart.invalidate();
     }

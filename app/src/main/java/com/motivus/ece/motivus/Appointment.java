@@ -25,12 +25,13 @@ public class Appointment implements Comparable<Appointment> {
     public int done = 0;
     public int score = 0;
     public byte[] pic;
+    public int category = 0;
 
     public Appointment() {
 
     }
 
-    public Appointment(int id, String title, String detail, String date, String time, Double latitude, Double longitude, int done, byte[] pic) {
+    public Appointment(int id, String title, String detail, String date, String time, Double latitude, Double longitude, int done, byte[] pic, int category) {
         super();
         this.id = id;
         this.title = title;
@@ -41,6 +42,7 @@ public class Appointment implements Comparable<Appointment> {
         this.longitude = longitude;
         this.done = done;
         this.pic = pic;
+        this.category = category;
     }
 
     public Calendar getDateTime() {
