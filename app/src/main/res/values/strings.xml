@@ -2,6 +2,10 @@
 <resources>
 
     <string name="app_name">Motivus</string>
+    <string name="signin">Sign in</string>
+    <string name="cancel">Cancel</string>
+    <string name="doctor_name">Doctor Name</string>
+    <string name="doctor_password">Doctor Password</string>
     <string name="title_section1">Appointment</string>
     <string name="title_section2">Calendar</string>
     <string name="title_section3">Report</string>

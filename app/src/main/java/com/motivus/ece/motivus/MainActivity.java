@@ -1,35 +1,26 @@
 package com.motivus.ece.motivus;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
-import android.content.Context;
-import android.content.ContentUris;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.LocationManager;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.preference.PreferenceManager;
-import android.provider.CalendarContract;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
@@ -50,9 +41,7 @@ import android.widget.Spinner;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-import com.github.mikephil.charting.charts.CombinedChart;
-
-public class MainActivity extends ActionBarActivity implements ActionBar.TabListener {
+public class MainActivity extends ActionBarActivity implements ActionBar.TabListener, SigninDialog.SigninDialogListener {
     /**
      * The refresh distance is set to 0 meter, which means the update does not depend on distance
      */
@@ -62,11 +51,14 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
     private Database mDatabase;
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private ViewPager mViewPager;
+    private boolean doctor = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        HelperFunctions.showNoticeDialog(this);
 
         //Get setting preference
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -151,11 +143,14 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            startActivity(new Intent(this, SettingsActivity.class));
-            return true;
+        if(doctor == true) {
+            if (id == R.id.action_settings) {
+                startActivity(new Intent(this, SettingsActivity.class));
+                return true;
+            }
         }
+        else
+            Toast.makeText(this, "You are not a doctor. No permission ", Toast.LENGTH_SHORT).show();
 
         return super.onOptionsItemSelected(item);
     }
@@ -676,6 +671,16 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
     public void onDestroy() {
         super.onDestroy();
         mDatabase.close();
+    }
+
+    @Override
+    public void onDialogPositiveClick(SigninDialog dialog) {
+        doctor = true;
+    }
+
+    @Override
+    public void onDialogNegativeClick(SigninDialog dialog) {
+        doctor = false;
     }
 
     private class PreferenceChangeListener implements SharedPreferences.OnSharedPreferenceChangeListener {

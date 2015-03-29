@@ -9,6 +9,7 @@ import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Environment;
+import android.support.v4.app.FragmentActivity;
 
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
@@ -151,6 +152,12 @@ public class HelperFunctions {
             }
         }
         return saved;
+    }
+
+    public static void showNoticeDialog(Context context) {
+        //Create an instance of the dialog fragment and show it
+        SigninDialog dialog = new SigninDialog();
+        dialog.show(((FragmentActivity)context).getSupportFragmentManager(), "Log In Dialog");
     }
 
     public static Appointment[] demoAppointments() {
