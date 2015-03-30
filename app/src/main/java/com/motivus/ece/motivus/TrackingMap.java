@@ -17,10 +17,15 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.UiSettings;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.TileOverlay;
+import com.google.android.gms.maps.model.TileOverlayOptions;
+import com.google.maps.android.heatmaps.HeatmapTileProvider;
 
 import java.util.ArrayList;
 
@@ -30,12 +35,12 @@ import java.util.ArrayList;
 public class TrackingMap extends FragmentActivity implements LocationListener {
     private GoogleMap mGoogleMap;
     private UiSettings uiSettings;
-    private Marker selectedLocation;
     private LocationManager mLocationManager;
     private static final long MIN_TIME = 400;
     private static final float MIN_DISTANCE = 1000;
     private LatLng latLng;
-    private MarkerOptions markerOptions;
+    private HeatmapTileProvider mProvider;
+    private TileOverlay mOverlay;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,8 +50,26 @@ public class TrackingMap extends FragmentActivity implements LocationListener {
         //Loading map
         try {
             initializeMap();
+            //Add all the visited locations
             ArrayList<GPSlocation> gpsLocations = Database.getInstance(getApplication()).getAllGPSs();
-            putMarkers(gpsLocations);
+            ArrayList<LatLng> gpsAddresses =  new ArrayList<LatLng>();
+            for(int i = 0; i < gpsLocations.size(); i++) {
+                gpsAddresses.add(i, new LatLng(
+                        gpsLocations.get(i).latitude, gpsLocations.get(i).longitude));
+            }
+            putMarkers(gpsAddresses, BitmapDescriptorFactory
+                    .defaultMarker(BitmapDescriptorFactory.HUE_RED));
+            putHeatMap(gpsAddresses);
+            //Add all the appointment locations
+            ArrayList<Appointment> appointments = Database.getInstance(getApplication()).getAllAppointments();
+            gpsAddresses =  new ArrayList<LatLng>();
+            for(int i = 0; i < appointments.size(); i++) {
+                gpsAddresses.add(i, new LatLng(
+                        appointments.get(i).latitude, appointments.get(i).longitude));
+            }
+            putMarkers(gpsAddresses, BitmapDescriptorFactory
+                    .defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -80,27 +103,27 @@ public class TrackingMap extends FragmentActivity implements LocationListener {
                         new LatLng(43.653226, -79.3831842)).zoom(10).build();
                 mGoogleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
             }
+
+            // Clears all the existing markers on the map
+            mGoogleMap.clear();
         }
     }
 
-    private void putMarkers(ArrayList<GPSlocation> addresses) {
+    private void putMarkers(ArrayList<LatLng> addresses, BitmapDescriptor descriptor) {
         if (addresses == null || addresses.size() == 0) {
             Toast.makeText(getBaseContext(), "No Location found", Toast.LENGTH_SHORT).show();
         }
 
-        // Clears all the existing markers on the map
-        mGoogleMap.clear();
-
         // Adding Markers on Google Map for each matching address
         for (int i = 0; i < addresses.size(); i++) {
-            GPSlocation address = (GPSlocation) addresses.get(i);
+            LatLng address = addresses.get(i);
 
             // Creating an instance of GeoPoint, to display in Google Map
             latLng = new LatLng(address.latitude, address.longitude);
 
-            markerOptions = new MarkerOptions();
+            MarkerOptions markerOptions = new MarkerOptions();
             markerOptions.position(latLng);
-
+            markerOptions.icon(descriptor);
             mGoogleMap.addMarker(markerOptions);
 
             // Locate the first location
@@ -110,6 +133,16 @@ public class TrackingMap extends FragmentActivity implements LocationListener {
                 mGoogleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
             }
         }
+    }
+
+    private void putHeatMap(ArrayList<LatLng> addresses) {
+        // Create a heat map tile provider, passing it the latlngs of the police stations.
+        mProvider = new HeatmapTileProvider.Builder()
+                .data(addresses)
+                .build();
+        mProvider.setRadius(50);
+        // Add a tile overlay to the map, using the heat map tile provider.
+        mOverlay = mGoogleMap.addTileOverlay(new TileOverlayOptions().tileProvider(mProvider));
     }
 
     private void alertTurnOnGPS() {

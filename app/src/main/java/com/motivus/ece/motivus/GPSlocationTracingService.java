@@ -28,11 +28,11 @@ public class GPSlocationTracingService extends Service {
     private LocationManager mLocationManager;
     private PowerManager.WakeLock wakeLock;
 
-    double mLastLatitude = 0;
-    double mLastLongitude = 0;
-    int mNotificationId;
+    private double mLastLatitude = 0;
+    private double mLastLongitude = 0;
+    private int mNotificationId;
 
-    public static float LOCATION_REFRESH_DISTANCE = 0;
+    public static float LOCATION_REFRESH_DISTANCE = 100;
     public static long LOCATION_REFRESH_TIME = 5000;
 
     public static float APPOINTMENT_RANGE = 500; //in meter
