@@ -1,13 +1,5 @@
 package com.motivus.ece.motivus;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
@@ -16,11 +8,10 @@ import android.content.SharedPreferences;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
@@ -33,13 +24,21 @@ import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TimePicker;
 import android.widget.Toast;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
 
 public class MainActivity extends ActionBarActivity implements ActionBar.TabListener, SigninDialog.SigninDialogListener {
     /**
@@ -652,7 +651,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                             appointment.detail = editText_detail.getText().toString();
                             appointment.time = editText_time.getText().toString();
                             appointment.date = editText_date.getText().toString();
-                            appointment.category = Database.AppointmentCategory.indexOf(spinner_category.getSelectedItem().toString()) + 1; //plus one since the "index 0 : all" is hidden
+                            appointment.category = Database.AppointmentCategory.indexOf(spinner_category.getSelectedItem().toString()) - 1; //plus one since the "index 0 : all" is hidden
                             Database.getInstance(getActivity()).updateAppointment(appointment);
                             Toast.makeText(getActivity(), "Saved!", Toast.LENGTH_SHORT).show();
                             getActivity().getSupportFragmentManager().popBackStack();
