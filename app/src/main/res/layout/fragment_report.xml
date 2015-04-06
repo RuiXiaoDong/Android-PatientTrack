@@ -7,82 +7,87 @@
     tools:context=".MainActivity$reportFragment">
 
     <TextView android:id="@+id/section_label" android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content" android:gravity="center" />
 
     <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="135dp"
+        android:layout_width="150dp"
         android:text="Map Tracking"
         android:id="@+id/button_tracking_map"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:textColor="#ffffff"
-        android:background="#ff1f75ff"
-        android:textStyle="bold|normal|italic"
-        android:height="60dp"
-        android:layout_marginBottom="10dp" />
+        android:background="@drawable/shadow"
+        android:drawableTop="@drawable/map_tracking"
+        android:textStyle="bold|normal"
+        android:textColor="@color/white"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:layout_below="@+id/section_label"
+        android:layout_alignLeft="@+id/button_tracking_appointment"
+        android:layout_alignStart="@+id/button_tracking_appointment" />
 
     <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="135dp"
+        android:layout_width="150dp"
         android:text="Accomplishment Rate"
         android:id="@+id/button_tracking_accomplishment"
-        android:textColor="#ffffff"
-        android:background="#ff1f75ff"
-        android:textStyle="bold|normal|italic"
-        android:height="60dp"
-        android:layout_below="@+id/button_tracking_map"
-        android:layout_toRightOf="@+id/section_label"
-        android:layout_alignRight="@+id/button_tracking_map"
-        android:layout_alignEnd="@+id/button_tracking_map"
-        android:layout_marginBottom="10dp" />
-
+        android:background="@drawable/shadow"
+        android:drawableTop="@drawable/task_completed"
+        android:gravity="bottom|center_horizontal"
+        android:textStyle="bold|normal"
+        android:textColor="@color/white"
+        android:paddingTop="15dp"
+        android:paddingBottom="5dp"
+        android:layout_below="@+id/section_label"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
     <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="135dp"
+        android:layout_width="150dp"
+        android:layout_margin="2dp"
         android:text="Appointment Numbers"
         android:id="@+id/button_tracking_appointment"
-        android:textColor="#ffffff"
-        android:background="#ff1f75ff"
-        android:textStyle="bold|normal|italic"
-        android:height="60dp"
-        android:layout_below="@+id/button_tracking_accomplishment"
-        android:layout_toRightOf="@+id/section_label"
-        android:layout_alignRight="@+id/button_tracking_map"
-        android:layout_alignEnd="@+id/button_tracking_map"
-        android:layout_marginBottom="10dp" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Output GPS Data"
-        android:id="@+id/button_rawdata_gps"
-        android:textColor="#ffffff"
-        android:background="#ff1f75ff"
-        android:textStyle="bold|normal|italic"
-        android:height="60dp"
-        android:layout_below="@+id/button_scores"
+        android:background="@drawable/shadow"
+        android:drawableTop="@drawable/task_number"
+        android:gravity="bottom|center_horizontal"
+        android:textStyle="bold|normal"
+        android:textColor="@color/white"
+        android:paddingTop="15dp"
+        android:paddingBottom="10dp"
+        android:layout_marginBottom="5dp"
+        android:layout_centerVertical="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignRight="@+id/button_tracking_appointment"
-        android:layout_alignEnd="@+id/button_tracking_appointment" />
+        android:layout_alignParentStart="true" />
 
     <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="135dp"
+        android:layout_width="150dp"
         android:text="Patient Scores"
         android:id="@+id/button_scores"
-        android:textColor="#ffffff"
-        android:background="#ff1f75ff"
-        android:textStyle="bold|normal|italic"
-        android:height="60dp"
+        android:background="@drawable/shadow"
+        android:drawableTop="@drawable/patient"
+        android:gravity="bottom|center_horizontal"
+        android:textStyle="bold|normal"
+        android:textColor="@color/white"
+        android:paddingTop="15dp"
+        android:paddingBottom="15dp"
+        android:layout_marginBottom="15dp"
+        android:layout_alignTop="@+id/button_tracking_appointment"
+        android:layout_alignLeft="@+id/button_tracking_accomplishment"
+        android:layout_alignStart="@+id/button_tracking_accomplishment" />
+
+    <Button
+        android:layout_height="135dp"
+        android:layout_width="155dp"
+        android:text="Output GPS Data"
+        android:id="@+id/button_rawdata_gps"
+        android:background="@drawable/shadow"
+        android:drawableTop="@drawable/output"
+        android:gravity="bottom|center_horizontal"
+        android:textStyle="bold|normal"
+        android:textColor="@color/white"
+        android:paddingTop="15dp"
+        android:paddingBottom="15dp"
         android:layout_below="@+id/button_tracking_appointment"
-        android:layout_alignRight="@+id/button_rawdata_gps"
-        android:layout_alignEnd="@+id/button_rawdata_gps"
-        android:layout_toRightOf="@+id/section_label"
-        android:layout_toEndOf="@+id/section_label"
-        android:layout_marginBottom="10dp" />
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="29dp" />
+
 </RelativeLayout>

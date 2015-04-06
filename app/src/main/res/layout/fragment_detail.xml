@@ -12,6 +12,7 @@
         android:layout_height="match_parent"
         android:layout_alignParentTop="true"
         android:layout_above="@+id/button_edit"
+        android:layout_marginTop="7dp"
         android:id="@+id/scrollView">
 
         <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -46,7 +47,9 @@
 
             <EditText
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:background="@drawable/border_locked"
+                android:layout_height="30dp"
+                android:paddingLeft="7dp"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="title"
                 android:id="@+id/editView_title"
@@ -71,7 +74,9 @@
 
             <EditText
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:background="@drawable/border_locked"
+                android:layout_height="30dp"
+                android:paddingLeft="7dp"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="detail"
                 android:id="@+id/editView_detail"
@@ -96,7 +101,9 @@
 
             <EditText
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:background="@drawable/border_locked"
+                android:layout_height="30dp"
+                android:paddingLeft="7dp"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="latitude"
                 android:id="@+id/editView_latitude"
@@ -120,7 +127,9 @@
 
             <EditText
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:background="@drawable/border_locked"
+                android:layout_height="30dp"
+                android:paddingLeft="7dp"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="longitude"
                 android:id="@+id/editView_longitude"
@@ -144,7 +153,9 @@
 
             <EditText
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:background="@drawable/border_locked"
+                android:layout_height="30dp"
+                android:paddingLeft="7dp"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="time"
                 android:id="@+id/editView_time"
@@ -168,17 +179,18 @@
 
             <EditText
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:background="@drawable/border_locked"
+                android:layout_height="30dp"
+                android:paddingLeft="7dp"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="date"
                 android:id="@+id/editView_date"
                 android:layout_below="@+id/textView_date_label"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
-                android:layout_marginBottom="30dp"
+                android:layout_marginBottom="15dp"
                 android:layout_alignRight="@+id/editView_time"
                 android:layout_alignEnd="@+id/editView_time" />
-
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -194,16 +206,15 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/spinner_category"
+                android:background="@drawable/border_locked"
                 android:layout_alignParentBottom="true"
                 android:spinnerMode="dropdown"
-                android:background="#ff1f75ff"
                 android:layout_below="@+id/textView_category_label"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentStart="true"
                 android:layout_marginBottom="30dp"
                 android:minHeight="40dp" />
-
             <CheckBox
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -220,37 +231,41 @@
 
     <Button
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="45dp"
         android:text="Delete"
         android:id="@+id/button_delete"
         android:layout_alignParentBottom="true"
         android:layout_alignRight="@+id/scrollView"
         android:layout_alignEnd="@+id/scrollView"
-        android:layout_alignTop="@+id/button_edit"
         android:textColor="#ffffff"
-        android:background="#ff1f75ff"
-        android:textStyle="bold|normal|italic" />
+        android:background="@drawable/shadow"
+        android:padding="2dp"
+        android:textStyle="bold|normal"
+        android:layout_below="@+id/scrollView" />
 
     <Button
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="45dp"
         android:id="@+id/button_edit"
         android:layout_alignParentBottom="true"
         android:layout_alignLeft="@+id/scrollView"
         android:text="@string/button_edit"
         android:textColor="#ffffff"
-        android:background="#ff1f75ff"
-        android:textStyle="bold|normal|italic" />
+        android:background="@drawable/shadow"
+        android:padding="2dp"
+        android:textStyle="bold|normal" />
 
     <Button
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="45dp"
         android:id="@+id/button_done"
         android:text="@string/button_done"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:textColor="#ffffff"
-        android:background="#ff1f75ff"
-        android:textStyle="bold|normal|italic" />
+        android:background="@drawable/shadow"
+        android:padding="2dp"
+        android:textStyle="bold|normal"
+        android:layout_below="@+id/scrollView" />
 
 </RelativeLayout>

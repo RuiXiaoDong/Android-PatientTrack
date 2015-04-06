@@ -1,13 +1,5 @@
 package com.motivus.ece.motivus;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
@@ -16,11 +8,10 @@ import android.content.SharedPreferences;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
@@ -31,15 +22,24 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TimePicker;
 import android.widget.Toast;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
 
 public class MainActivity extends ActionBarActivity implements ActionBar.TabListener, SigninDialog.SigninDialogListener {
     /**
@@ -183,22 +183,22 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
         @Override
         public Fragment getItem(int position) {
-            switch(position) {
-                case 0:
-                    return AppointmentFragment.newInstance(position + 1);
-                case 1:
-                    return ReportFragment.newInstance(position + 1);
-                //case 2:
-                //    return GoogleCalendarFragment.newInstance(position + 1);
-                default:
-                    return AppointmentFragment.newInstance(position + 1);
+                  switch(position) {
+                    case 0:
+                        return AppointmentFragment.newInstance(position + 1);
+                    case 1:
+                        return ReportFragment.newInstance(position + 1);
+                    case 2:
+                        return GoogleCalendarFragment.newInstance(position + 1);
+                    default:
+                        return AppointmentFragment.newInstance(position + 1);
             }
         }
 
         @Override
         public int getCount() {
-            // Show 2 total pages.
-            return 2;
+            // Show 3 total pages.
+            return 3;
         }
 
         @Override
@@ -220,8 +220,8 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                     return getString(R.string.title_section1).toUpperCase(l);
                 case 1:
                     return getString(R.string.title_section3).toUpperCase(l);
-                //case 2:
-                //    return getString(R.string.title_section2).toUpperCase(l);
+                case 2:
+                    return getString(R.string.title_section2).toUpperCase(l);
             }
             return null;
         }
@@ -446,7 +446,8 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
          * fragment.
          */
         private static final String ARG_SECTION_NUMBER = "section_number";
-        private WebView webView;
+        private WebView browser;
+
         /**
          * Returns a new instance of this fragment for the given section
          * number.
@@ -468,18 +469,37 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                                  Bundle savedInstanceState) {
             //super.onCreate(savedInstanceState);
             View rootView = inflater.inflate(R.layout.fragment_cal, container, false);
-            //see map
-            Button mapTrackButton = (Button) rootView.findViewById(R.id.button_calendar);
+            //
+         /*   Button mapTrackButton = (Button) rootView.findViewById(R.id.button_calendar);
             mapTrackButton.setOnClickListener(
                     new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            Intent calendar = new Intent(v.getContext(), Calendar.class);
-                            startActivity(calendar);
+                            Intent cal = new Intent(v.getContext(), com.motivus.ece.motivus.Calendar.class);
+                            startActivity(cal);
                         }
                     }
-            );
+            );*/
+
+            browser = (WebView) rootView.findViewById(R.id.webView2);
+            browser.setWebViewClient(new MyBrowser());
+
+            String url = "http://www.cs.toronto.edu/~jbermudez/cal.html";
+            browser.getSettings().setLoadsImagesAutomatically(true);
+            browser.getSettings().setJavaScriptEnabled(true);
+            // browser.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
+            browser.loadUrl(url);
+
+
             return rootView;
+        }
+
+        private class MyBrowser extends WebViewClient {
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                view.loadUrl(url);
+                return true;
+            }
         }
     }
 

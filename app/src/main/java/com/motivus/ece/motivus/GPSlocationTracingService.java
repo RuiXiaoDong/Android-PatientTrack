@@ -7,9 +7,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
+import android.location.LocationManager;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.location.LocationManager;
 import android.os.PowerManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
@@ -21,7 +24,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Locale;
 
 public class GPSlocationTracingService extends Service {
 
@@ -109,10 +111,19 @@ public class GPSlocationTracingService extends Service {
                         PendingIntent.FLAG_UPDATE_CURRENT
                 );
         mBuilder.setContentIntent(resultPendingIntent);
+
+        try {
+            Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+            Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notification);
+            r.play();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         NotificationManager mNotificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         mNotificationManager.notify(mNotificationId, mBuilder.build());
         return mNotificationId;
+
     }
 
     /**
