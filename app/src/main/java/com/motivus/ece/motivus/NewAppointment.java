@@ -127,7 +127,7 @@ public class NewAppointment extends ActionBarActivity {
                         appointment.done = 0;
                         appointment.score = 0;
                         Spinner spinner = (Spinner)findViewById(R.id.spinner_category);
-                        appointment.category = Database.AppointmentCategory.indexOf(spinner.getSelectedItem().toString())  + 1; //plus one since the "index 0 : all" is hidden
+                        appointment.category = Database.AppointmentCategory.indexOf(spinner.getSelectedItem().toString())  - 1; //substract one since the "index 0 : all" is hidden
 
                         Database.getInstance(getApplication()).addAppointment(appointment);
                         Calendar beginTime = Calendar.getInstance();
