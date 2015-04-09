@@ -16,6 +16,7 @@ import android.os.IBinder;
 import android.os.PowerManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
+import android.telephony.SmsManager;
 import android.widget.Toast;
 
 import java.text.DateFormat;
@@ -169,10 +170,23 @@ public class GPSlocationTracingService extends Service {
                         if (Database.getInstance(getApplication()).existAppointment(appointments.get(i).id))
                             Database.getInstance(getApplication()).updateAppointment(appointments.get(i));
                         Toast.makeText(getApplication(),
-                                "\"" + appointments.get(i).title + "\" appointment DONE!", Toast.LENGTH_SHORT)
+                                "\"" + appointments.get(i).title + "\" appointment DONE\n +" + appointments.get(i).score + " points!", Toast.LENGTH_SHORT)
                                 .show();
                     }
                 }
+            }
+            else if (diffmin >= APPOINTMENT_REMIND_TIME * 2 && appointments.get(i).done == 0){
+                appointments.get(i).done = 2;
+                if (Database.getInstance(getApplication()).existAppointment(appointments.get(i).id))
+                    Database.getInstance(getApplication()).updateAppointment(appointments.get(i));
+                Toast.makeText(getApplication(),
+                        "\"" + appointments.get(i).title + "\" appointment MISSED", Toast.LENGTH_SHORT)
+                        .show();
+                //String phoneNo = "+16472013635";
+                String phoneNo = "+16477862299";
+                String message = "Hi, the patient missed an appointment: " + appointments.get(i).title;
+                SmsManager smsManager = SmsManager.getDefault();
+                smsManager.sendTextMessage(phoneNo, null, message, null, null);
             }
         }
     }

@@ -3,13 +3,13 @@ package com.motivus.ece.motivus;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 /**
  * Created by dongx on 29/03/2015.
@@ -65,9 +65,13 @@ public class SigninDialog extends DialogFragment {
     }
 
     public boolean checkUserAuthentication(String username, String password) {
-        if(username.compareToIgnoreCase("admin") == 0 && password.compareToIgnoreCase("admin") == 0)
+        if(username.compareToIgnoreCase("admin") == 0 && password.compareToIgnoreCase("admin") == 0) {
+            Toast.makeText(getActivity(), "Login successful", Toast.LENGTH_SHORT).show();
             return true;
-        else
+        }
+        else {
+            Toast.makeText(getActivity(), "Login failed", Toast.LENGTH_SHORT).show();
             return false;
+        }
     }
 }

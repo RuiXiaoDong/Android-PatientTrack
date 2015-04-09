@@ -199,7 +199,7 @@ public class HelperFunctions {
         appointment2.time = "08:30";
         appointment2.latitude = 43.657193807051044;
         appointment2.longitude = -79.3880546092987;
-        appointment2.done = 0;
+        appointment2.done = 1;
         appointment2.score = 0;
         appointment2.pic = null;
         appointment2.category = 5;
@@ -255,7 +255,7 @@ public class HelperFunctions {
         appointment6.time = "08:30";
         appointment6.latitude = 43.65350085935817;
         appointment6.longitude = -79.40527439117432;
-        appointment6.done = 0;
+        appointment6.done = 1;
         appointment6.score = 0;
         appointment6.pic = null;
         appointment6.category = 6;
@@ -311,7 +311,7 @@ public class HelperFunctions {
         appointment10.time = "08:30";
         appointment10.latitude = 43.65350085935817;
         appointment10.longitude = -79.40527439117432;
-        appointment10.done = 0;
+        appointment10.done = 1;
         appointment10.score = 0;
         appointment10.pic = null;
         appointment10.category = 2;
@@ -325,7 +325,7 @@ public class HelperFunctions {
         appointment11.time = "08:30";
         appointment11.latitude = 43.659389479900085;
         appointment11.longitude = -79.37318980693817;
-        appointment11.done = 0;
+        appointment11.done = 1;
         appointment11.score = 0;
         appointment11.pic = null;
         appointment11.category = 4;
@@ -353,7 +353,7 @@ public class HelperFunctions {
         appointment13.time = "08:30";
         appointment13.latitude = 43.659389479900085;
         appointment13.longitude = -79.37318980693817;
-        appointment13.done = 0;
+        appointment13.done = 1;
         appointment13.score = 0;
         appointment13.pic = null;
         appointment13.category = 3;

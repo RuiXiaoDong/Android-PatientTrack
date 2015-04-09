@@ -17,8 +17,6 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TimePicker;
 
-import com.google.android.gms.maps.model.LatLng;
-
 import java.util.Calendar;
 
 
@@ -38,9 +36,14 @@ public class NewAppointment extends ActionBarActivity {
     int day2 ;
     String loc;
 
+    boolean doctor;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        doctor = getIntent().getExtras().getBoolean("logged_in", false);
+
         setContentView(R.layout.activity_new_appointment);
 
         //Category
@@ -126,6 +129,11 @@ public class NewAppointment extends ActionBarActivity {
                         appointment.longitude = longitude;
                         appointment.done = 0;
                         appointment.score = 0;
+                        if (doctor)
+                            appointment.locked = 1;
+                        else
+                            appointment.locked = 0;
+
                         Spinner spinner = (Spinner)findViewById(R.id.spinner_category);
                         appointment.category = Database.AppointmentCategory.indexOf(spinner.getSelectedItem().toString())  + 1; //plus one since the "index 0 : all" is hidden
 

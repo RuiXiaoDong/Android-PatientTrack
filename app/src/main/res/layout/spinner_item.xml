@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     android:textSize="16sp"
     android:gravity="center"
-    android:textColor="#ffffffff"
+    android:textColor="@color/actionbar_opacity"
     android:padding="5dip"
     android:textStyle="bold"
     />

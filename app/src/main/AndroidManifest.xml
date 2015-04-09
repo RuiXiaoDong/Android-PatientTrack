@@ -13,6 +13,8 @@
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS" />
+    <uses-permission android:name="android.permission.SEND_SMS" />
+
 
     <application
         android:allowBackup="true"
@@ -87,6 +89,17 @@
             android:label="Calendar"
              >
         </activity>
+        <activity
+            android:name=".ScreenON_OFF_ACTIVITY"
+            android:label="@string/title_activity_new_appointment"
+            android:screenOrientation="portrait" >
+            <intent-filter>
+                <action android:name="android.intent.action.POP" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
     </application>
 
 </manifest>

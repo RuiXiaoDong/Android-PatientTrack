@@ -51,19 +51,21 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
     private Database mDatabase;
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private ViewPager mViewPager;
-    private boolean doctor = false;
+    private static boolean doctor = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        HelperFunctions.showNoticeDialog(this);
+   //     HelperFunctions.showNoticeDialog(this);
 
         //Get setting preference
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         mPreferenceListener = new PreferenceChangeListener();
         mSharedPreferences.registerOnSharedPreferenceChangeListener(mPreferenceListener);
+
+
 
         //Check GPS on or off
         mLocationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
@@ -143,15 +145,24 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        if(doctor == true) {
-            if (id == R.id.action_settings) {
+
+        if (id == R.id.action_settings) {
+            if(doctor == true) {
                 startActivity(new Intent(this, SettingsActivity.class));
                 return true;
             }
+            else
+                Toast.makeText(this, "Please log in first!", Toast.LENGTH_SHORT).show();
         }
-        else
-            Toast.makeText(this, "You are not a doctor. No permission ", Toast.LENGTH_SHORT).show();
 
+        else if (id == R.id.action_login) {
+            if (doctor) {
+                Toast.makeText(this, "Logged off", Toast.LENGTH_SHORT).show();
+                doctor = false;
+            }
+            else
+                HelperFunctions.showNoticeDialog(this);
+        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -265,6 +276,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_appointment, container, false);
 
+
             //Get all the appointment and put them into
             appointmentList = Database.getInstance(getActivity()).getAllAppointments();
             Collections.sort(appointmentList);
@@ -289,12 +301,18 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                         @Override
                         public void onClick(View v) {
                             Intent newActivity = new Intent(v.getContext(), NewAppointment.class);
+                            newActivity.putExtra("logged_in", doctor);
                             startActivityForResult(newActivity, NewAppointmentIndex);
                         }
                     }
             );
 
+
+
             return rootView;
+
+
+
         }
 
         @Override
@@ -632,6 +650,12 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                         @Override
                         public void onClick(View v)
                         {
+                            if (!doctor && appointment.locked == 1){
+                                Toast.makeText(getActivity(),
+                                        "This appointment is locked!", Toast.LENGTH_SHORT)
+                                        .show();
+                                return;
+                            }
                             /*
                             long eventID= 8;
                             Uri deleteUri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, eventID);
@@ -647,6 +671,12 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                     new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
+                            if (!doctor && appointment.locked == 1){
+                                Toast.makeText(getActivity(),
+                                        "This appointment is locked!", Toast.LENGTH_SHORT)
+                                        .show();
+                                return;
+                            }
                             editAppointment.setVisibility(EditText.INVISIBLE);
                             deleteAppointment.setVisibility(EditText.INVISIBLE);
                             editText_title.setEnabled(true);
@@ -717,6 +747,9 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         float gpsTrackingDistanceInterval = Float.parseFloat(mSharedPreferences.getString("gps_tracking_distance_interval", "0"));
         long appointmentRemindTime = Long.parseLong(mSharedPreferences.getString("appointment_remind_time", "30"));
         float appointmentRange = Float.parseFloat(mSharedPreferences.getString("appointment_range", "500"));
+        String doctorPhoneNumber = mSharedPreferences.getString("doctor_phone_number", "+16472013635");
+
+
 
         if(gpsTrackingSwitch) {
             startService(new Intent(this, GPSlocationTracingService.class));

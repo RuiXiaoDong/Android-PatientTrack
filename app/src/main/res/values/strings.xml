@@ -17,5 +17,9 @@
     <string name="button_edit">Edit</string>
     <string name="button_done">Done</string>
     <string name="title_activity_combined_chart">CombinedChartActivity</string>
+    <string name="action_login">Log On/Off</string>
+    <string name="doctor_phone_number">Doctor phone number</string>
+    <string name="patient_phone_number">Patient phone number</string>
+
 
 </resources>
